@@ -27,9 +27,9 @@ export interface PaginatedResponse<T> {
  */
 export interface ApiError {
   message: string;
-  detail?: string;
+  detail?: string | undefined;
   status: number;
-  errors?: Record<string, string[]>;
+  errors?: Record<string, string[]> | undefined;
 }
 
 /**

@@ -2,7 +2,7 @@
 // Domain Model Types - Based on DB Schema
 // ============================================
 
-import { BaseEntity } from './common.types';
+import type { BaseEntity } from './common.types';
 
 // ============================================
 // Enums (matching PostgreSQL ENUM types)
@@ -59,8 +59,10 @@ export interface User extends BaseEntity {
   email: string;
   username: string;
   full_name: string | null;
+  phone: string | null;
   is_active: boolean;
-  is_superuser: boolean;
+  is_admin: boolean; // Backend uses is_admin instead of is_superuser
+  is_superuser?: boolean; // Alias for compatibility
   avatar_url: string | null;
 }
 

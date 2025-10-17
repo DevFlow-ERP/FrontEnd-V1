@@ -2,7 +2,7 @@
 // Router Guards - Authentication & Authorization
 // ============================================
 
-import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
+import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
 import { useAuthStore } from 'src/stores/auth.store';
 
 // ============================================
@@ -90,7 +90,7 @@ export function guestGuard(
  * Redirects to unauthorized page if user doesn't have required role
  */
 export function roleGuard(allowedRoles: string[]) {
-  return async (
+  return (
     to: RouteLocationNormalized,
     from: RouteLocationNormalized,
     next: NavigationGuardNext

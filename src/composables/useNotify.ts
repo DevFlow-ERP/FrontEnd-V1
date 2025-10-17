@@ -2,7 +2,8 @@
 // useNotify Composable - Quasar Notify wrapper
 // ============================================
 
-import { Notify, QNotifyCreateOptions } from 'quasar';
+import { Notify } from 'quasar';
+import type { QNotifyCreateOptions } from 'quasar';
 
 export function useNotify() {
   /**
@@ -16,7 +17,7 @@ export function useNotify() {
     Notify.create({
       type: 'positive',
       message,
-      caption,
+      ...(caption && { caption }),
       position: 'top-right',
       timeout: 3000,
       ...options,
@@ -34,7 +35,7 @@ export function useNotify() {
     Notify.create({
       type: 'negative',
       message,
-      caption,
+      ...(caption && { caption }),
       position: 'top-right',
       timeout: 5000,
       ...options,
@@ -52,7 +53,7 @@ export function useNotify() {
     Notify.create({
       type: 'warning',
       message,
-      caption,
+      ...(caption && { caption }),
       position: 'top-right',
       timeout: 4000,
       ...options,
@@ -70,7 +71,7 @@ export function useNotify() {
     Notify.create({
       type: 'info',
       message,
-      caption,
+      ...(caption && { caption }),
       position: 'top-right',
       timeout: 3000,
       ...options,

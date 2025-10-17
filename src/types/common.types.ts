@@ -33,7 +33,7 @@ export interface LoadingState {
 export interface DialogState {
   isOpen: boolean;
   mode: 'create' | 'edit' | 'view';
-  data: unknown | null;
+  data: unknown;
 }
 
 /**

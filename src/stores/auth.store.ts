@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!accessToken.value && !!user.value);
 
-  const isSuperuser = computed(() => user.value?.is_superuser || false);
+  const isSuperuser = computed(() => user.value?.is_admin || user.value?.is_superuser || false);
 
   const userFullName = computed(() => {
     if (!user.value) return '';
@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (!user.value) return '';
     const name = userFullName.value;
     const parts = name.split(' ');
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && parts[0] && parts[1]) {
       return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
@@ -79,15 +79,18 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await authApi.login({ email, password });
 
-      // Store tokens and user
+      // Store tokens
       accessToken.value = response.access_token;
       refreshToken.value = response.refresh_token;
-      user.value = response.user;
 
-      // Persist to localStorage
+      // Persist tokens to localStorage
       localStorage.setItem('access_token', response.access_token);
       localStorage.setItem('refresh_token', response.refresh_token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+
+      // Fetch user info from /api/v1/auth/me
+      const fetchedUser = await authApi.getCurrentUser();
+      user.value = fetchedUser;
+      localStorage.setItem('user', JSON.stringify(fetchedUser));
 
       return response;
     } catch (err: unknown) {
@@ -201,7 +204,9 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null;
 
     try {
-      const response = await authApi.handleAuthCallback({ code, state });
+      const response = await authApi.handleAuthCallback(
+        state !== undefined ? { code, state } : { code }
+      );
 
       // Store tokens and user
       accessToken.value = response.access_token;

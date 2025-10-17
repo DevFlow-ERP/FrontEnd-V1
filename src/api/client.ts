@@ -2,13 +2,29 @@
 // API Client - Axios instance with interceptors
 // ============================================
 
-import axios, {
+import axios from 'axios';
+import type {
   AxiosInstance,
   AxiosError,
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
 import type { ApiError } from 'src/types/api.types';
+
+// Custom error class for API errors
+class ApiErrorClass extends Error {
+  public readonly detail?: string | undefined;
+  public readonly status: number;
+  public readonly errors?: Record<string, string[]> | undefined;
+
+  constructor(apiError: ApiError) {
+    super(apiError.message);
+    this.name = 'ApiError';
+    this.detail = apiError.detail;
+    this.status = apiError.status;
+    this.errors = apiError.errors;
+  }
+}
 
 // ============================================
 // Create Axios Instance
@@ -128,7 +144,11 @@ apiClient.interceptors.response.use(
           window.location.href = '/auth/login';
         }
 
-        return Promise.reject(refreshError);
+        return Promise.reject(
+          refreshError instanceof Error
+            ? refreshError
+            : new Error('Token refresh failed')
+        );
       }
     }
 
@@ -160,7 +180,7 @@ apiClient.interceptors.response.use(
       errors: error.response?.data?.errors,
     };
 
-    return Promise.reject(apiError);
+    return Promise.reject(new ApiErrorClass(apiError));
   }
 );
 
