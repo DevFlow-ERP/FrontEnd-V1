@@ -33,20 +33,23 @@ export type ServerType = 'web' | 'api' | 'database' | 'cache' | 'message_queue' 
 export type ServerStatus = 'running' | 'stopped' | 'maintenance' | 'error';
 
 export type ServiceType =
-  | 'backend'
-  | 'frontend'
+  | 'web'
+  | 'api'
   | 'database'
   | 'cache'
-  | 'message_queue'
-  | 'api_gateway'
+  | 'queue'
+  | 'worker'
+  | 'cron'
   | 'other';
 
-export type ServiceStatus = 'running' | 'stopped' | 'deploying' | 'error';
+export type ServiceStatus = 'running' | 'stopped' | 'degraded' | 'maintenance' | 'failed';
+
+export type DeploymentType = 'manual' | 'automatic' | 'rollback';
 
 export type DeploymentStatus =
   | 'pending'
   | 'in_progress'
-  | 'completed'
+  | 'success'
   | 'failed'
   | 'rolled_back';
 
@@ -94,6 +97,7 @@ export interface Team extends BaseEntity {
 export interface TeamCreate {
   name: string;
   description?: string;
+  is_active?: boolean;
 }
 
 export interface TeamUpdate {
@@ -167,6 +171,8 @@ export interface Sprint extends BaseEntity {
   status: SprintStatus;
   start_date: string | null;
   end_date: string | null;
+  total_issues?: number;
+  completed_issues?: number;
 }
 
 export interface SprintCreate {
@@ -287,35 +293,71 @@ export interface Service extends BaseEntity {
   name: string;
   description: string | null;
   server_id: number;
-  project_id: number;
   type: ServiceType;
   status: ServiceStatus;
+  version: string | null;
   port: number | null;
-  repository_url: string | null;
-  current_version: string | null;
+  url: string | null;
+  process_name: string | null;
+  pid: number | null;
+  container_id: string | null;
+  image_name: string | null;
+  cpu_limit: number | null;
+  memory_limit_mb: number | null;
+  health_check_url: string | null;
+  health_check_enabled: boolean;
+  environment_variables: Record<string, unknown> | null;
+  config_path: string | null;
+  log_path: string | null;
+  auto_start: boolean;
+  notes: string | null;
 }
 
 export interface ServiceCreate {
   name: string;
-  description?: string;
   server_id: number;
-  project_id: number;
   type: ServiceType;
   status?: ServiceStatus;
+  version?: string;
   port?: number;
-  repository_url?: string;
-  current_version?: string;
+  url?: string;
+  process_name?: string;
+  pid?: number;
+  container_id?: string;
+  image_name?: string;
+  cpu_limit?: number;
+  memory_limit_mb?: number;
+  health_check_url?: string;
+  health_check_enabled?: boolean;
+  environment_variables?: Record<string, unknown>;
+  config_path?: string;
+  log_path?: string;
+  auto_start?: boolean;
+  description?: string;
+  notes?: string;
 }
 
 export interface ServiceUpdate {
   name?: string;
-  description?: string;
-  server_id?: number;
   type?: ServiceType;
   status?: ServiceStatus;
+  version?: string;
   port?: number;
-  repository_url?: string;
-  current_version?: string;
+  url?: string;
+  process_name?: string;
+  pid?: number;
+  container_id?: string;
+  image_name?: string;
+  cpu_limit?: number;
+  memory_limit_mb?: number;
+  health_check_url?: string;
+  health_check_enabled?: boolean;
+  environment_variables?: Record<string, unknown>;
+  config_path?: string;
+  log_path?: string;
+  auto_start?: boolean;
+  description?: string;
+  notes?: string;
 }
 
 // ============================================
@@ -324,28 +366,39 @@ export interface ServiceUpdate {
 
 export interface Deployment extends BaseEntity {
   service_id: number;
-  version: string;
-  environment: ServerEnvironment;
-  status: DeploymentStatus;
   deployed_by: number;
-  deployed_at: string | null;
-  rollback_version: string | null;
+  version: string;
+  commit_hash: string | null;
+  branch: string | null;
+  tag: string | null;
+  type: DeploymentType;
+  status: DeploymentStatus;
+  started_at: string | null;
+  completed_at: string | null;
+  environment: string;
+  rollback_from_id: number | null;
   notes: string | null;
+  error_message: string | null;
+  log_url: string | null;
 }
 
 export interface DeploymentCreate {
   service_id: number;
   version: string;
-  environment: ServerEnvironment;
+  environment: string;
+  commit_hash?: string;
+  branch?: string;
+  tag?: string;
+  type?: DeploymentType;
   status?: DeploymentStatus;
-  deployed_by: number;
-  deployed_at?: string;
-  rollback_version?: string;
   notes?: string;
 }
 
 export interface DeploymentUpdate {
   status?: DeploymentStatus;
-  deployed_at?: string;
+  started_at?: string;
+  completed_at?: string;
   notes?: string;
+  error_message?: string;
+  log_url?: string;
 }

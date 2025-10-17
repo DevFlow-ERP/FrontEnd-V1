@@ -14,6 +14,7 @@ import type {
   ServiceType,
   ServiceStatus,
   DeploymentStatus,
+  DeploymentType,
   TeamRole,
 } from 'src/types/models.types';
 import type { SelectOption } from 'src/types/api.types';
@@ -72,6 +73,14 @@ export const ISSUE_TYPE_COLORS: Record<IssueType, string> = {
   task: 'green',
   bug: 'red',
   improvement: 'orange',
+};
+
+export const ISSUE_TYPE_ICONS: Record<IssueType, string> = {
+  epic: 'folder_special',
+  story: 'menu_book',
+  task: 'task_alt',
+  bug: 'bug_report',
+  improvement: 'trending_up',
 };
 
 // ============================================
@@ -144,6 +153,15 @@ export const SERVER_ENVIRONMENT_COLORS: Record<ServerEnvironment, string> = {
   production: 'green',
 };
 
+export const SERVER_TYPE_COLORS: Record<ServerType, string> = {
+  web: 'blue',
+  api: 'purple',
+  database: 'green',
+  cache: 'orange',
+  message_queue: 'teal',
+  other: 'grey',
+};
+
 export const SERVER_STATUS_COLORS: Record<ServerStatus, string> = {
   running: 'green',
   stopped: 'grey',
@@ -156,45 +174,71 @@ export const SERVER_STATUS_COLORS: Record<ServerStatus, string> = {
 // ============================================
 
 export const SERVICE_TYPE_OPTIONS: SelectOption<ServiceType>[] = [
-  { label: 'Backend', value: 'backend', icon: 'dns' },
-  { label: 'Frontend', value: 'frontend', icon: 'web' },
+  { label: 'Web', value: 'web', icon: 'language' },
+  { label: 'API', value: 'api', icon: 'api' },
   { label: 'Database', value: 'database', icon: 'storage' },
   { label: 'Cache', value: 'cache', icon: 'memory' },
-  { label: 'Message Queue', value: 'message_queue', icon: 'queue' },
-  { label: 'API Gateway', value: 'api_gateway', icon: 'api' },
+  { label: 'Queue', value: 'queue', icon: 'queue' },
+  { label: 'Worker', value: 'worker', icon: 'work' },
+  { label: 'Cron', value: 'cron', icon: 'schedule' },
   { label: '기타', value: 'other', icon: 'devices_other' },
 ];
 
 export const SERVICE_STATUS_OPTIONS: SelectOption<ServiceStatus>[] = [
   { label: '실행 중', value: 'running', icon: 'check_circle' },
   { label: '중지됨', value: 'stopped', icon: 'cancel' },
-  { label: '배포 중', value: 'deploying', icon: 'cloud_upload' },
-  { label: '오류', value: 'error', icon: 'error' },
+  { label: '저하됨', value: 'degraded', icon: 'warning' },
+  { label: '유지보수', value: 'maintenance', icon: 'build' },
+  { label: '실패', value: 'failed', icon: 'error' },
 ];
+
+export const SERVICE_TYPE_COLORS: Record<ServiceType, string> = {
+  web: 'blue',
+  api: 'purple',
+  database: 'green',
+  cache: 'orange',
+  queue: 'teal',
+  worker: 'indigo',
+  cron: 'amber',
+  other: 'grey',
+};
 
 export const SERVICE_STATUS_COLORS: Record<ServiceStatus, string> = {
   running: 'green',
   stopped: 'grey',
-  deploying: 'blue',
-  error: 'red',
+  degraded: 'orange',
+  maintenance: 'blue',
+  failed: 'red',
 };
 
 // ============================================
 // Deployment Constants
 // ============================================
 
+export const DEPLOYMENT_TYPE_OPTIONS: SelectOption<DeploymentType>[] = [
+  { label: '수동 배포', value: 'manual', icon: 'touch_app' },
+  { label: '자동 배포', value: 'automatic', icon: 'autorenew' },
+  { label: '롤백', value: 'rollback', icon: 'undo' },
+];
+
 export const DEPLOYMENT_STATUS_OPTIONS: SelectOption<DeploymentStatus>[] = [
   { label: '대기 중', value: 'pending', icon: 'hourglass_empty' },
   { label: '진행 중', value: 'in_progress', icon: 'cloud_upload' },
-  { label: '완료', value: 'completed', icon: 'check_circle' },
+  { label: '성공', value: 'success', icon: 'check_circle' },
   { label: '실패', value: 'failed', icon: 'error' },
   { label: '롤백됨', value: 'rolled_back', icon: 'undo' },
 ];
 
+export const DEPLOYMENT_TYPE_COLORS: Record<DeploymentType, string> = {
+  manual: 'blue',
+  automatic: 'green',
+  rollback: 'orange',
+};
+
 export const DEPLOYMENT_STATUS_COLORS: Record<DeploymentStatus, string> = {
   pending: 'grey',
   in_progress: 'blue',
-  completed: 'green',
+  success: 'green',
   failed: 'red',
   rolled_back: 'orange',
 };

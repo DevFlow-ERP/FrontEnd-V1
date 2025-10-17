@@ -65,28 +65,46 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '대시보드' },
       },
 
-      // Projects (Placeholder routes)
+      // Projects
       {
         path: 'projects',
         name: 'projects',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/projects/ProjectListPage.vue'),
         meta: { title: '프로젝트' },
       },
+      {
+        path: 'projects/:id',
+        name: 'project-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create ProjectDetailPage
+        meta: { title: '프로젝트 상세' },
+      },
 
-      // Sprints (Placeholder routes)
+      // Sprints
       {
         path: 'sprints',
         name: 'sprints',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/sprints/SprintListPage.vue'),
         meta: { title: '스프린트' },
       },
+      {
+        path: 'sprints/:id',
+        name: 'sprint-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create SprintDetailPage
+        meta: { title: '스프린트 상세' },
+      },
 
-      // Issues (Placeholder routes)
+      // Issues
       {
         path: 'issues',
         name: 'issues',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/issues/IssueListPage.vue'),
         meta: { title: '이슈' },
+      },
+      {
+        path: 'issues/:id',
+        name: 'issue-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create IssueDetailPage
+        meta: { title: '이슈 상세' },
       },
 
       // Kanban Board (Placeholder route)
@@ -97,36 +115,60 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '칸반 보드' },
       },
 
-      // Teams (Placeholder routes)
+      // Teams
       {
         path: 'teams',
         name: 'teams',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/teams/TeamListPage.vue'),
         meta: { title: '팀' },
       },
+      {
+        path: 'teams/:id',
+        name: 'team-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create TeamDetailPage
+        meta: { title: '팀 상세' },
+      },
 
-      // Resources - Servers (Placeholder routes)
+      // Resources - Servers
       {
         path: 'resources/servers',
         name: 'servers',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/servers/ServerListPage.vue'),
         meta: { title: '서버' },
       },
+      {
+        path: 'resources/servers/:id',
+        name: 'server-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create ServerDetailPage
+        meta: { title: '서버 상세' },
+      },
 
-      // Resources - Services (Placeholder routes)
+      // Resources - Services
       {
         path: 'resources/services',
         name: 'services',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/services/ServiceListPage.vue'),
         meta: { title: '서비스' },
       },
+      {
+        path: 'resources/services/:id',
+        name: 'service-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create ServiceDetailPage
+        meta: { title: '서비스 상세' },
+      },
 
-      // Deployments (Placeholder routes)
+      // Deployments
       {
         path: 'deployments',
         name: 'deployments',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/deployments/DeploymentListPage.vue'),
         meta: { title: '배포' },
+      },
+      {
+        path: 'deployments/:id',
+        name: 'deployment-detail',
+        component: () => import('pages/IndexPage.vue'), // TODO: Create DeploymentDetailPage
+        meta: { title: '배포 상세' },
       },
 
       // Profile (Placeholder)

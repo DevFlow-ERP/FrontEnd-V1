@@ -1,147 +1,210 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="dashboard-page">
     <!-- Page Header -->
-    <div class="row items-center justify-between q-mb-lg">
-      <div>
-        <div class="text-h4 text-weight-bold">대시보드</div>
+    <div class="row items-center q-mb-lg">
+      <div class="col">
+        <div class="text-h4 text-weight-bold">Dashboard</div>
         <div class="text-subtitle2 text-grey-7">
-          프로젝트 및 이슈 현황을 한눈에 확인하세요
+          Welcome back, {{ userFullName }}
         </div>
       </div>
-      <q-btn
-        label="새 프로젝트"
-        color="primary"
-        icon="add"
-        @click="$router.push('/projects/create')"
-      />
+      <div class="col-auto">
+        <q-btn
+          color="primary"
+          icon="add"
+          label="New Project"
+          @click="handleCreateProject"
+        />
+      </div>
     </div>
 
     <!-- Stats Cards -->
     <div class="row q-col-gutter-md q-mb-lg">
       <div class="col-12 col-sm-6 col-md-3">
+        <stats-card
+          title="Total Projects"
+          :value="stats.totalProjects"
+          icon="folder"
+          color="primary"
+          :loading="loading"
+        />
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <stats-card
+          title="Active Sprints"
+          :value="stats.activeSprints"
+          icon="timer"
+          color="secondary"
+          :loading="loading"
+        />
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <stats-card
+          title="Open Issues"
+          :value="stats.openIssues"
+          icon="bug_report"
+          color="warning"
+          :loading="loading"
+        />
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <stats-card
+          title="My Tasks"
+          :value="stats.myTasks"
+          icon="task"
+          color="positive"
+          :loading="loading"
+        />
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="row q-col-gutter-lg">
+      <!-- Left Column -->
+      <div class="col-12 col-md-8">
+        <!-- Recent Projects -->
+        <q-card class="q-mb-lg">
+          <q-card-section>
+            <div class="text-h6 q-mb-md">Recent Projects</div>
+            <recent-projects :loading="loading" :projects="recentProjects" />
+          </q-card-section>
+        </q-card>
+
+        <!-- Activity Feed -->
         <q-card>
           <q-card-section>
-            <div class="row items-center">
-              <q-icon name="folder" size="48px" color="primary" class="q-mr-md" />
-              <div>
-                <div class="text-h6 text-weight-bold">12</div>
-                <div class="text-caption text-grey-7">프로젝트</div>
-              </div>
-            </div>
+            <div class="text-h6 q-mb-md">Recent Activity</div>
+            <activity-feed :loading="loading" :activities="activities" />
           </q-card-section>
         </q-card>
       </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card>
+      <!-- Right Column -->
+      <div class="col-12 col-md-4">
+        <!-- My Issues -->
+        <q-card class="q-mb-lg">
           <q-card-section>
-            <div class="row items-center">
-              <q-icon name="sprint" size="48px" color="secondary" class="q-mr-md" />
-              <div>
-                <div class="text-h6 text-weight-bold">5</div>
-                <div class="text-caption text-grey-7">활성 스프린트</div>
-              </div>
-            </div>
+            <div class="text-h6 q-mb-md">My Issues</div>
+            <my-issues :loading="loading" :issues="myIssues" />
           </q-card-section>
         </q-card>
-      </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
+        <!-- Sprint Progress -->
         <q-card>
           <q-card-section>
-            <div class="row items-center">
-              <q-icon name="bug_report" size="48px" color="warning" class="q-mr-md" />
-              <div>
-                <div class="text-h6 text-weight-bold">38</div>
-                <div class="text-caption text-grey-7">활성 이슈</div>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card>
-          <q-card-section>
-            <div class="row items-center">
-              <q-icon name="rocket_launch" size="48px" color="positive" class="q-mr-md" />
-              <div>
-                <div class="text-h6 text-weight-bold">24</div>
-                <div class="text-caption text-grey-7">배포</div>
-              </div>
-            </div>
+            <div class="text-h6 q-mb-md">Sprint Progress</div>
+            <sprint-progress :loading="loading" :sprint="currentSprint" />
           </q-card-section>
         </q-card>
       </div>
     </div>
-
-    <!-- Content Grid -->
-    <div class="row q-col-gutter-md">
-      <!-- Recent Projects -->
-      <div class="col-12 col-md-6">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6 text-weight-bold q-mb-md">최근 프로젝트</div>
-            <q-list separator>
-              <q-item v-for="i in 5" :key="i">
-                <q-item-section avatar>
-                  <q-avatar color="primary" text-color="white" icon="folder" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>프로젝트 {{ i }}</q-item-label>
-                  <q-item-label caption>최근 업데이트: 2시간 전</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge color="positive">활성</q-badge>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- My Issues -->
-      <div class="col-12 col-md-6">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6 text-weight-bold q-mb-md">내 이슈</div>
-            <q-list separator>
-              <q-item v-for="i in 5" :key="i">
-                <q-item-section avatar>
-                  <q-avatar color="warning" text-color="white" icon="bug_report" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>이슈 #{{ i }}</q-item-label>
-                  <q-item-label caption>프로젝트 {{ i }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge color="info">진행중</q-badge>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-
-    <!-- Welcome Banner -->
-    <q-banner class="bg-primary text-white q-mt-md" rounded>
-      <template v-slot:avatar>
-        <q-icon name="info" size="md" />
-      </template>
-      <div class="text-body1">
-        <strong>환영합니다!</strong> DevFlow ERP에 오신 것을 환영합니다.
-        프로젝트 관리를 시작하려면 새 프로젝트를 생성해보세요.
-      </div>
-    </q-banner>
   </q-page>
 </template>
 
 <script setup lang="ts">
-// Placeholder dashboard page
-// Will be replaced with real data in Phase 3
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from 'src/stores/auth.store';
+import StatsCard from 'src/components/dashboard/StatsCard.vue';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import RecentProjects from 'src/components/dashboard/RecentProjects.vue';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import MyIssues from 'src/components/dashboard/MyIssues.vue';
+import ActivityFeed from 'src/components/dashboard/ActivityFeed.vue';
+import SprintProgress from 'src/components/dashboard/SprintProgress.vue';
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+// ============================================
+// State
+// ============================================
+
+const loading = ref(false);
+
+const stats = ref({
+  totalProjects: 0,
+  activeSprints: 0,
+  openIssues: 0,
+  myTasks: 0,
+});
+
+const recentProjects = ref([]);
+const myIssues = ref([]);
+const activities = ref([]);
+const currentSprint = ref(null);
+
+// ============================================
+// Computed
+// ============================================
+
+const userFullName = computed(() => authStore.userFullName);
+
+// ============================================
+// Methods
+// ============================================
+
+function loadDashboardData() {
+  loading.value = true;
+  try {
+    // TODO: Implement API calls to fetch dashboard data
+    // const [statsData, projectsData, issuesData, activitiesData, sprintData] = await Promise.all([
+    //   fetchDashboardStats(),
+    //   fetchRecentProjects(),
+    //   fetchMyIssues(),
+    //   fetchRecentActivities(),
+    //   fetchCurrentSprint(),
+    // ]);
+
+    // Mock data for now
+    stats.value = {
+      totalProjects: 12,
+      activeSprints: 3,
+      openIssues: 47,
+      myTasks: 8,
+    };
+
+    // Mock recent projects
+    recentProjects.value = [];
+
+    // Mock my issues
+    myIssues.value = [];
+
+    // Mock activities
+    activities.value = [];
+
+    // Mock current sprint
+    currentSprint.value = null;
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+function handleCreateProject() {
+  void router.push('/projects/create');
+}
+
+// ============================================
+// Lifecycle
+// ============================================
+
+onMounted(() => {
+  loadDashboardData();
+});
 </script>
 
-<style scoped lang="scss">
-// Dashboard specific styles
+<style lang="scss" scoped>
+.dashboard-page {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (max-width: $breakpoint-sm-max) {
+  .dashboard-page {
+    padding: 16px;
+  }
+}
 </style>

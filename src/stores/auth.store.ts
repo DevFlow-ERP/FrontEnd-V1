@@ -211,12 +211,14 @@ export const useAuthStore = defineStore('auth', () => {
       // Store tokens and user
       accessToken.value = response.access_token;
       refreshToken.value = response.refresh_token;
-      user.value = response.user;
+      user.value = response.user ?? null;
 
       // Persist to localStorage
       localStorage.setItem('access_token', response.access_token);
       localStorage.setItem('refresh_token', response.refresh_token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
 
       return response;
     } catch (err: unknown) {
