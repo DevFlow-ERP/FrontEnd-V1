@@ -1,6 +1,7 @@
 <template>
   <q-form @submit="handleSubmit" class="q-gutter-md">
-    <!-- Service Selection -->\n    <q-select
+    <!-- Service Selection -->
+    <q-select
       v-model="formData.service_id"
       :options="serviceOptions"
       label="Service *"
