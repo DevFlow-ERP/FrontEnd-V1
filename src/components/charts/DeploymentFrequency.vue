@@ -83,7 +83,7 @@ async function fetchDeployments() {
   try {
     const params: QueryParams = {
       page: 1,
-      page_size: 1000, // Large number to get all recent deployments
+      page_size: 100, // Max allowed by backend
     };
 
     if (props.environment) {

@@ -89,8 +89,11 @@ export async function getIssuesBySprint(
   sprintId: number,
   params?: QueryParams
 ): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>(`/sprints/${sprintId}/issues`, {
-    params,
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
+    params: {
+      ...params,
+      sprint_id: sprintId,
+    },
   });
   return response.data;
 }

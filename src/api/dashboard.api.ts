@@ -37,7 +37,7 @@ export interface RecentDeploymentsResponse {
  * 대시보드 통계 조회
  */
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const response = await apiClient.get<DashboardStats>('/api/v1/dashboard/stats');
+  const response = await apiClient.get<DashboardStats>('/dashboard/stats');
   return response.data;
 }
 
@@ -45,7 +45,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
  * 최근 프로젝트 목록 조회
  */
 export async function getRecentProjects(limit: number = 5): Promise<RecentProjectsResponse> {
-  const response = await apiClient.get<RecentProjectsResponse>('/api/v1/dashboard/recent-projects', {
+  const response = await apiClient.get<RecentProjectsResponse>('/dashboard/recent-projects', {
     params: { limit },
   });
   return response.data;
@@ -55,7 +55,7 @@ export async function getRecentProjects(limit: number = 5): Promise<RecentProjec
  * 현재 활성 스프린트 조회
  */
 export async function getActiveSprint(): Promise<Sprint | null> {
-  const response = await apiClient.get<Sprint | null>('/api/v1/dashboard/active-sprint');
+  const response = await apiClient.get<Sprint | null>('/dashboard/active-sprint');
   return response.data;
 }
 
@@ -63,7 +63,7 @@ export async function getActiveSprint(): Promise<Sprint | null> {
  * 내가 담당한 이슈 목록 조회
  */
 export async function getMyIssues(limit: number = 10): Promise<MyIssuesResponse> {
-  const response = await apiClient.get<MyIssuesResponse>('/api/v1/dashboard/my-issues', {
+  const response = await apiClient.get<MyIssuesResponse>('/dashboard/my-issues', {
     params: { limit },
   });
   return response.data;
@@ -73,7 +73,7 @@ export async function getMyIssues(limit: number = 10): Promise<MyIssuesResponse>
  * 최근 배포 목록 조회
  */
 export async function getRecentDeployments(limit: number = 5): Promise<RecentDeploymentsResponse> {
-  const response = await apiClient.get<RecentDeploymentsResponse>('/api/v1/dashboard/recent-deployments', {
+  const response = await apiClient.get<RecentDeploymentsResponse>('/dashboard/recent-deployments', {
     params: { limit },
   });
   return response.data;

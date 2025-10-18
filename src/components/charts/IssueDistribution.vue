@@ -73,7 +73,7 @@ async function fetchIssues() {
   try {
     const params: QueryParams = {
       page: 1,
-      page_size: 1000, // Large number to get all issues
+      page_size: 100, // Max allowed by backend
     };
 
     if (props.projectId) {
