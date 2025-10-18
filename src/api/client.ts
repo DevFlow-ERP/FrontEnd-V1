@@ -10,6 +10,7 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type { ApiError } from 'src/types/api.types';
+import { Notify } from 'quasar';
 
 // Custom error class for API errors
 class ApiErrorClass extends Error {
@@ -155,18 +156,57 @@ apiClient.interceptors.response.use(
     // Handle 403 Forbidden - No permission
     if (error.response?.status === 403) {
       console.error('🚫 Access Denied:', error.response.data);
-      // Optionally redirect to unauthorized page
-      // window.location.href = '/auth/unauthorized';
+      Notify.create({
+        type: 'negative',
+        message: '접근 권한이 없습니다',
+        caption: error.response.data?.detail || '이 작업을 수행할 권한이 없습니다.',
+        position: 'top-right',
+        timeout: 5000,
+      });
     }
 
     // Handle 404 Not Found
     if (error.response?.status === 404) {
       console.error('🔍 Not Found:', error.response.data);
+      Notify.create({
+        type: 'warning',
+        message: '요청한 리소스를 찾을 수 없습니다',
+        caption: error.response.data?.detail || '존재하지 않는 데이터입니다.',
+        position: 'top-right',
+        timeout: 4000,
+      });
     }
 
     // Handle 500 Internal Server Error
     if (error.response?.status === 500) {
       console.error('🔥 Server Error:', error.response.data);
+      Notify.create({
+        type: 'negative',
+        message: '서버 오류가 발생했습니다',
+        caption: '잠시 후 다시 시도해주세요.',
+        position: 'top-right',
+        timeout: 5000,
+        actions: [
+          {
+            label: '새로고침',
+            color: 'white',
+            handler: () => {
+              window.location.reload();
+            },
+          },
+        ],
+      });
+    }
+
+    // Handle 400 Bad Request
+    if (error.response?.status === 400) {
+      Notify.create({
+        type: 'warning',
+        message: '잘못된 요청입니다',
+        caption: error.response.data?.detail || '입력 데이터를 확인해주세요.',
+        position: 'top-right',
+        timeout: 4000,
+      });
     }
 
     // Transform error for consistent error handling
