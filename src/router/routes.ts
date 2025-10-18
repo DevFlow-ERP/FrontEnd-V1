@@ -75,7 +75,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'projects/:id',
         name: 'project-detail',
-        component: () => import('pages/IndexPage.vue'), // TODO: Create ProjectDetailPage
+        component: () => import('pages/projects/ProjectDetailPage.vue'),
         meta: { title: '프로젝트 상세' },
       },
 

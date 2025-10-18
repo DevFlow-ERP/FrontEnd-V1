@@ -6,7 +6,6 @@
     :class="badgeClass"
   >
     <q-icon v-if="icon" :name="icon" size="14px" class="q-mr-xs" />
-    {{ label }}
   </q-badge>
 </template>
 
