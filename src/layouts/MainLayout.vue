@@ -24,6 +24,18 @@
         <!-- Spacer -->
         <q-space />
 
+        <!-- Global Search -->
+        <q-btn
+          flat
+          dense
+          round
+          icon="search"
+          @click="showSearch = true"
+          class="q-mr-sm"
+        >
+          <q-tooltip>검색 (Ctrl+K)</q-tooltip>
+        </q-btn>
+
         <!-- Dark Mode Toggle -->
         <q-btn
           flat
@@ -253,8 +265,16 @@
 
     <!-- Page Container -->
     <q-page-container>
+      <!-- Breadcrumbs -->
+      <div class="q-px-md q-pt-md q-pb-sm">
+        <page-breadcrumbs />
+      </div>
+
       <router-view />
     </q-page-container>
+
+    <!-- Global Search -->
+    <global-search v-model="showSearch" />
   </q-layout>
 </template>
 
@@ -263,6 +283,8 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { useAuth } from 'src/composables/useAuth';
+import PageBreadcrumbs from 'src/components/common/PageBreadcrumbs.vue';
+import GlobalSearch from 'src/components/common/GlobalSearch.vue';
 
 // ============================================
 // Composables
@@ -277,6 +299,7 @@ const { user, userFullName, userInitials, logout } = useAuth();
 // ============================================
 
 const leftDrawerOpen = ref(false);
+const showSearch = ref(false);
 
 // ============================================
 // Methods
