@@ -3,10 +3,24 @@
     <!-- Name -->
     <q-input
       v-model="formData.name"
-      label="Project Name *"
-      :rules="[(val) => !!val || 'Name is required']"
+      label="프로젝트 이름 *"
+      :rules="[(val) => !!val || '프로젝트 이름은 필수입니다']"
       outlined
       class="q-mb-md"
+    />
+
+    <!-- Key -->
+    <q-input
+      v-model="formData.key"
+      label="프로젝트 키 *"
+      hint="대문자로 시작, 대문자와 숫자만 가능 (예: PROJ1, DEV)"
+      :rules="[
+        (val) => !!val || '프로젝트 키는 필수입니다',
+        (val) => /^[A-Z][A-Z0-9]*$/.test(val) || '대문자로 시작하고 대문자와 숫자만 사용 가능합니다'
+      ]"
+      outlined
+      class="q-mb-md"
+      maxlength="10"
     />
 
     <!-- Description -->
@@ -129,6 +143,7 @@ const isEdit = ref(!!props.project);
 
 const formData = ref<ProjectCreate>({
   name: '',
+  key: '',
   team_id: 0,
   description: '',
   status: 'planning',
@@ -148,6 +163,7 @@ watch(
       isEdit.value = true;
       formData.value = {
         name: project.name,
+        key: project.key,
         team_id: project.team_id,
         description: project.description || '',
         status: project.status,

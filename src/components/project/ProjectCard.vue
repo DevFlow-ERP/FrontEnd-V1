@@ -4,7 +4,10 @@
       <!-- Header -->
       <div class="row items-center justify-between q-mb-sm">
         <div class="col">
-          <div class="text-h6 text-weight-bold ellipsis">{{ project.name }}</div>
+          <div class="row items-center q-gutter-sm">
+            <div class="text-h6 text-weight-bold ellipsis">{{ project.name }}</div>
+            <q-badge color="grey-7" outline>{{ project.key }}</q-badge>
+          </div>
         </div>
         <div class="col-auto">
           <status-badge type="project-status" :value="project.status" />

@@ -133,6 +133,7 @@ export interface TeamMemberUpdate {
 
 export interface Project extends BaseEntity {
   name: string;
+  key: string;
   description: string | null;
   team_id: number;
   status: ProjectStatus;
@@ -143,6 +144,7 @@ export interface Project extends BaseEntity {
 
 export interface ProjectCreate {
   name: string;
+  key: string;
   description?: string;
   team_id: number;
   status?: ProjectStatus;
@@ -153,6 +155,7 @@ export interface ProjectCreate {
 
 export interface ProjectUpdate {
   name?: string;
+  key?: string;
   description?: string;
   status?: ProjectStatus;
   start_date?: string;

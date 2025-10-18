@@ -71,10 +71,24 @@
         </q-card>
 
         <!-- Activity Feed -->
-        <q-card>
+        <q-card class="q-mb-lg">
           <q-card-section>
             <div class="text-h6 q-mb-md">Recent Activity</div>
             <activity-feed :loading="loading" :activities="activities" />
+          </q-card-section>
+        </q-card>
+
+        <!-- Issue Distribution Chart -->
+        <q-card class="q-mb-lg">
+          <q-card-section>
+            <issue-distribution :loading="loading" />
+          </q-card-section>
+        </q-card>
+
+        <!-- Deployment Frequency Chart -->
+        <q-card>
+          <q-card-section>
+            <deployment-frequency :loading="loading" />
           </q-card-section>
         </q-card>
       </div>
@@ -90,12 +104,23 @@
         </q-card>
 
         <!-- Sprint Progress -->
-        <q-card>
+        <q-card class="q-mb-lg">
           <q-card-section>
             <div class="text-h6 q-mb-md">Sprint Progress</div>
             <sprint-progress :loading="loading" :sprint="currentSprint" />
           </q-card-section>
         </q-card>
+
+        <!-- Burndown Chart -->
+        <q-card class="q-mb-lg">
+          <q-card-section>
+            <div class="text-h6 q-mb-md">Sprint Burndown</div>
+            <burndown-chart :loading="loading" :sprint-id="currentSprint?.id ?? null" />
+          </q-card-section>
+        </q-card>
+
+        <!-- Deployment Status -->
+        <deployment-status />
       </div>
     </div>
   </q-page>
@@ -105,6 +130,13 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from 'src/stores/auth.store';
+import {
+  getDashboardStats,
+  getRecentProjects,
+  getActiveSprint,
+  getMyIssues,
+} from 'src/api/dashboard.api';
+import type { Sprint, Project, Issue } from 'src/types/models.types';
 import StatsCard from 'src/components/dashboard/StatsCard.vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import RecentProjects from 'src/components/dashboard/RecentProjects.vue';
@@ -112,6 +144,10 @@ import RecentProjects from 'src/components/dashboard/RecentProjects.vue';
 import MyIssues from 'src/components/dashboard/MyIssues.vue';
 import ActivityFeed from 'src/components/dashboard/ActivityFeed.vue';
 import SprintProgress from 'src/components/dashboard/SprintProgress.vue';
+import DeploymentStatus from 'src/components/dashboard/DeploymentStatus.vue';
+import IssueDistribution from 'src/components/charts/IssueDistribution.vue';
+import BurndownChart from 'src/components/charts/BurndownChart.vue';
+import DeploymentFrequency from 'src/components/charts/DeploymentFrequency.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -129,10 +165,10 @@ const stats = ref({
   myTasks: 0,
 });
 
-const recentProjects = ref([]);
-const myIssues = ref([]);
+const recentProjects = ref<Project[]>([]);
+const myIssues = ref<Issue[]>([]);
 const activities = ref([]);
-const currentSprint = ref(null);
+const currentSprint = ref<Sprint | null>(null);
 
 // ============================================
 // Computed
@@ -144,37 +180,36 @@ const userFullName = computed(() => authStore.userFullName);
 // Methods
 // ============================================
 
-function loadDashboardData() {
+async function loadDashboardData() {
   loading.value = true;
   try {
-    // TODO: Implement API calls to fetch dashboard data
-    // const [statsData, projectsData, issuesData, activitiesData, sprintData] = await Promise.all([
-    //   fetchDashboardStats(),
-    //   fetchRecentProjects(),
-    //   fetchMyIssues(),
-    //   fetchRecentActivities(),
-    //   fetchCurrentSprint(),
-    // ]);
+    // Fetch all dashboard data in parallel
+    const [statsData, projectsData, issuesData, sprintData] = await Promise.all([
+      getDashboardStats(),
+      getRecentProjects(5),
+      getMyIssues(10),
+      getActiveSprint(),
+    ]);
 
-    // Mock data for now
+    // Update stats
     stats.value = {
-      totalProjects: 12,
-      activeSprints: 3,
-      openIssues: 47,
-      myTasks: 8,
+      totalProjects: statsData.total_projects,
+      activeSprints: statsData.active_sprints,
+      openIssues: statsData.open_issues,
+      myTasks: statsData.my_tasks,
     };
 
-    // Mock recent projects
-    recentProjects.value = [];
+    // Update recent projects
+    recentProjects.value = projectsData.items;
 
-    // Mock my issues
-    myIssues.value = [];
+    // Update my issues
+    myIssues.value = issuesData.items;
 
-    // Mock activities
+    // Update current sprint
+    currentSprint.value = sprintData;
+
+    // TODO: Implement activities feed API
     activities.value = [];
-
-    // Mock current sprint
-    currentSprint.value = null;
   } catch (error) {
     console.error('Failed to load dashboard data:', error);
   } finally {
@@ -191,7 +226,7 @@ function handleCreateProject() {
 // ============================================
 
 onMounted(() => {
-  loadDashboardData();
+  void loadDashboardData();
 });
 </script>
 
