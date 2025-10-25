@@ -49,50 +49,46 @@ export const useDeploymentStore = defineStore('deployment', () => {
   const hasDeployments = computed(() => deployments.value.length > 0);
 
   // Deployments by type
-  const manualDeployments = computed(() =>
-    deployments.value.filter((d) => d.type === 'manual')
-  );
+  const manualDeployments = computed(() => deployments.value.filter((d) => d.type === 'manual'));
 
   const automaticDeployments = computed(() =>
-    deployments.value.filter((d) => d.type === 'automatic')
+    deployments.value.filter((d) => d.type === 'automatic'),
   );
 
   const rollbackDeployments = computed(() =>
-    deployments.value.filter((d) => d.type === 'rollback')
+    deployments.value.filter((d) => d.type === 'rollback'),
   );
 
   // Deployments by status
   const pendingDeployments = computed(() =>
-    deployments.value.filter((d) => d.status === 'pending')
+    deployments.value.filter((d) => d.status === 'pending'),
   );
 
   const inProgressDeployments = computed(() =>
-    deployments.value.filter((d) => d.status === 'in_progress')
+    deployments.value.filter((d) => d.status === 'in_progress'),
   );
 
   const successDeployments = computed(() =>
-    deployments.value.filter((d) => d.status === 'success')
+    deployments.value.filter((d) => d.status === 'success'),
   );
 
-  const failedDeployments = computed(() =>
-    deployments.value.filter((d) => d.status === 'failed')
-  );
+  const failedDeployments = computed(() => deployments.value.filter((d) => d.status === 'failed'));
 
   const rolledBackDeployments = computed(() =>
-    deployments.value.filter((d) => d.status === 'rolled_back')
+    deployments.value.filter((d) => d.status === 'rolled_back'),
   );
 
   // Deployments by environment
   const productionDeployments = computed(() =>
-    deployments.value.filter((d) => d.environment === 'production')
+    deployments.value.filter((d) => d.environment === 'production'),
   );
 
   const stagingDeployments = computed(() =>
-    deployments.value.filter((d) => d.environment === 'staging')
+    deployments.value.filter((d) => d.environment === 'staging'),
   );
 
   const developmentDeployments = computed(() =>
-    deployments.value.filter((d) => d.environment === 'dev' || d.environment === 'development')
+    deployments.value.filter((d) => d.environment === 'dev' || d.environment === 'development'),
   );
 
   // Filtered deployments
@@ -106,7 +102,7 @@ export const useDeploymentStore = defineStore('deployment', () => {
           d.version.toLowerCase().includes(query) ||
           (d.branch && d.branch.toLowerCase().includes(query)) ||
           (d.tag && d.tag.toLowerCase().includes(query)) ||
-          (d.notes && d.notes.toLowerCase().includes(query))
+          (d.notes && d.notes.toLowerCase().includes(query)),
       );
     }
 
@@ -353,8 +349,7 @@ export const useDeploymentStore = defineStore('deployment', () => {
       totalCount.value = response.total;
       return response;
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to fetch deployments by service';
+      const message = err instanceof Error ? err.message : 'Failed to fetch deployments by service';
       error.value = message;
       throw err;
     } finally {
@@ -397,8 +392,7 @@ export const useDeploymentStore = defineStore('deployment', () => {
       totalCount.value = response.total;
       return response;
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to fetch deployments by status';
+      const message = err instanceof Error ? err.message : 'Failed to fetch deployments by status';
       error.value = message;
       throw err;
     } finally {

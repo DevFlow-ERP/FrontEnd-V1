@@ -111,7 +111,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'kanban',
         name: 'kanban',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/KanbanPage.vue'),
         meta: { title: '칸반 보드' },
       },
 

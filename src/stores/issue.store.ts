@@ -82,8 +82,7 @@ export const useIssueStore = defineStore('issue', () => {
       const query = searchQuery.value.toLowerCase();
       filtered = filtered.filter(
         (i) =>
-          i.title.toLowerCase().includes(query) ||
-          i.description?.toLowerCase().includes(query)
+          i.title.toLowerCase().includes(query) || i.description?.toLowerCase().includes(query),
       );
     }
 

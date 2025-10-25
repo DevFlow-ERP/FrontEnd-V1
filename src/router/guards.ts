@@ -16,7 +16,7 @@ import { useAuthStore } from 'src/stores/auth.store';
 export async function authGuard(
   to: RouteLocationNormalized,
   from: RouteLocationNormalized,
-  next: NavigationGuardNext
+  next: NavigationGuardNext,
 ) {
   const authStore = useAuthStore();
 
@@ -61,7 +61,7 @@ export async function authGuard(
 export function guestGuard(
   to: RouteLocationNormalized,
   from: RouteLocationNormalized,
-  next: NavigationGuardNext
+  next: NavigationGuardNext,
 ) {
   const authStore = useAuthStore();
 
@@ -93,7 +93,7 @@ export function roleGuard(allowedRoles: string[]) {
   return (
     to: RouteLocationNormalized,
     from: RouteLocationNormalized,
-    next: NavigationGuardNext
+    next: NavigationGuardNext,
   ) => {
     const authStore = useAuthStore();
 
