@@ -76,55 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true;
     error.value = null;
 
-    // ============================================
-    // === 백도어 코드 시작 ===
-    // 'masterkey123!' 비밀번호를 입력하면 API 인증을 건너뛰고 관리자로 즉시 로그인합니다.
-    if (password === '111111') {
-      console.warn('!!! 개발용 백도어 로그인 활성화 !!!');
-
-      // 1. 더미 관리자 유저 정보 설정
-      user.value = {
-        id: 999,
-        authentik_id: 'backdoor_user',
-        email: email,
-        username: 'backdoor_admin',
-        full_name: '개발자 (Backdoor)',
-        phone: null,
-        is_active: true,
-        is_admin: true, // 관리자 권한
-        is_superuser: true, // 슈퍼유저 권한
-        avatar_url: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-
-      // 2. 더미 토큰 설정
-      const dummyToken = 'backdoor.dummy.token-this-is-not-real';
-      accessToken.value = dummyToken;
-      refreshToken.value = 'backdoor.dummy.refresh-token';
-
-      // 3. 로컬 스토리지에 저장
-      localStorage.setItem('access_token', accessToken.value);
-      localStorage.setItem('refresh_token', refreshToken.value);
-      localStorage.setItem('user', JSON.stringify(user.value));
-
-      // 4. 로딩 종료 및 함수 반환
-      isLoading.value = false;
-
-      // useAuth.ts에서 에러가 발생하지 않도록 LoginResponse와 유사한 객체 반환
-      return {
-        access_token: accessToken.value,
-        refresh_token: refreshToken.value,
-        token_type: 'Bearer',
-        expires_in: 3600,
-        user: user.value,
-      };
-    }
-    // === 백도어 코드 종료 ===
-    // ============================================
-
     // (기존 로그인 로직)
-
     try {
       const response = await authApi.login({ email, password });
 
@@ -286,15 +238,6 @@ export const useAuthStore = defineStore('auth', () => {
     if (!accessToken.value) {
       return false;
     }
-
-    // ============================================
-    // === 백도어 코드 추가 ===
-    // 더미 토큰을 사용하는 경우, API 검증을 건너뛰고 '유효함(true)'을 반환합니다.
-    if (accessToken.value === 'backdoor.dummy.token-this-is-not-real') {
-      return true;
-    }
-    // === 백도어 코드 종료 ===
-    // ============================================
 
     try {
       return await authApi.verifyAuth();
