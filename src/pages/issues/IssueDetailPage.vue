@@ -181,7 +181,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
+// import { useQuasar } from 'quasar'; // [REMOVED]
 import { getIssue, updateIssue, deleteIssue } from 'src/api/issues.api';
 import { listProjects } from 'src/api/projects.api';
 import { listSprints } from 'src/api/sprints.api';
@@ -198,7 +198,7 @@ import IssueForm from 'src/components/issue/IssueForm.vue';
 
 const route = useRoute();
 const router = useRouter();
-const $q = useQuasar();
+// const $q = useQuasar(); // [REMOVED]
 const { notifySuccess, notifyError } = useNotify();
 const { confirmDelete } = useDialog();
 
