@@ -103,7 +103,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'issues/:id',
         name: 'issue-detail',
-        component: () => import('pages/IndexPage.vue'), // TODO: Create IssueDetailPage
+        component: () => import('pages/issues/IssueDetailPage.vue'), // TODO: Create IssueDetailPage
         meta: { title: '이슈 상세' },
       },
 

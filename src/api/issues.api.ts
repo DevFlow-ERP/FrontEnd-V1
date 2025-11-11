@@ -10,7 +10,9 @@ import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
  * Get paginated list of issues
  */
 export async function listIssues(params?: QueryParams): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', { params });
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
+    params,
+  });
   return response.data;
 }
 
@@ -49,7 +51,9 @@ export async function deleteIssue(id: number): Promise<void> {
  * Update issue status
  */
 export async function updateIssueStatus(id: number, status: string): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/status`, { status });
+  const response = await apiClient.patch<Issue>(`/issues/${id}/status`, {
+    status,
+  });
   return response.data;
 }
 
@@ -57,7 +61,9 @@ export async function updateIssueStatus(id: number, status: string): Promise<Iss
  * Assign issue to a user
  */
 export async function assignIssue(id: number, assignee_id: number | null): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/assign`, { assignee_id });
+  const response = await apiClient.patch<Issue>(`/issues/${id}/assign`, {
+    assignee_id,
+  });
   return response.data;
 }
 
@@ -65,7 +71,9 @@ export async function assignIssue(id: number, assignee_id: number | null): Promi
  * Move issue to a sprint
  */
 export async function moveIssueToSprint(id: number, sprint_id: number | null): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/move`, { sprint_id });
+  const response = await apiClient.patch<Issue>(`/issues/${id}/move`, {
+    sprint_id,
+  });
   return response.data;
 }
 
@@ -74,7 +82,7 @@ export async function moveIssueToSprint(id: number, sprint_id: number | null): P
  */
 export async function getIssuesByProject(
   projectId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Issue>> {
   const response = await apiClient.get<PaginatedResponse<Issue>>(`/projects/${projectId}/issues`, {
     params,
@@ -87,13 +95,10 @@ export async function getIssuesByProject(
  */
 export async function getIssuesBySprint(
   sprintId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
-    params: {
-      ...params,
-      sprint_id: sprintId,
-    },
+  const response = await apiClient.get<PaginatedResponse<Issue>>(`/sprints/${sprintId}/issues`, {
+    params,
   });
   return response.data;
 }
