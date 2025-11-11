@@ -89,7 +89,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'sprints/:id',
         name: 'sprint-detail',
-        component: () => import('pages/IndexPage.vue'), // TODO: Create SprintDetailPage
+        component: () => import('pages/sprints/SprintDetailPage.vue'), // TODO: Create SprintDetailPage
         meta: { title: '스프린트 상세' },
       },
 

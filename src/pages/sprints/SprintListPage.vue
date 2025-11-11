@@ -4,17 +4,10 @@
     <div class="row items-center q-mb-lg">
       <div class="col">
         <div class="text-h4 text-weight-bold">Sprints</div>
-        <div class="text-subtitle2 text-grey-7">
-          Manage your sprint iterations
-        </div>
+        <div class="text-subtitle2 text-grey-7">Manage your sprint iterations</div>
       </div>
       <div class="col-auto">
-        <q-btn
-          color="primary"
-          icon="add"
-          label="New Sprint"
-          @click="showCreateDialog = true"
-        />
+        <q-btn color="primary" icon="add" label="New Sprint" @click="showCreateDialog = true" />
       </div>
     </div>
 
@@ -99,11 +92,7 @@
       message="Create your first sprint to get started"
     >
       <template #actions>
-        <q-btn
-          color="primary"
-          label="Create Sprint"
-          @click="showCreateDialog = true"
-        />
+        <q-btn color="primary" label="Create Sprint" @click="showCreateDialog = true" />
       </template>
     </empty-state>
 
@@ -204,10 +193,7 @@ const showCreateDialog = ref(false);
 const editingSprint = ref<Sprint | null>(null);
 const projectOptions = ref<{ label: string; value: number }[]>([]);
 
-const statusFilterOptions = [
-  { label: 'All', value: '' },
-  ...SPRINT_STATUS_OPTIONS,
-];
+const statusFilterOptions = [{ label: 'All', value: '' }, ...SPRINT_STATUS_OPTIONS];
 
 const projectFilterOptions = ref<{ label: string; value: number }[]>([
   { label: 'All Projects', value: 0 },
@@ -309,10 +295,7 @@ async function loadProjects() {
       label: project.name,
       value: project.id,
     }));
-    projectFilterOptions.value = [
-      { label: 'All Projects', value: 0 },
-      ...projectOptions.value,
-    ];
+    projectFilterOptions.value = [{ label: 'All Projects', value: 0 }, ...projectOptions.value];
   } catch {
     notifyError('Failed to load projects');
   }
