@@ -8,6 +8,7 @@
       </div>
       <q-space />
       <q-btn v-if="sprint" flat icon="edit" label="수정" color="primary" @click="handleEdit" />
+      <q-btn v-if="sprint" flat icon="delete" label="삭제" color="negative" @click="handleDelete" />
     </div>
 
     <div v-if="isLoading" class="row justify-center q-py-xl">
@@ -109,41 +110,137 @@
         </q-card>
       </div>
     </div>
+
+    <q-dialog v-model="showEditDialog">
+      <q-card style="min-width: 600px">
+        <q-card-section>
+          <div class="text-h6">스프린트 수정</div>
+        </q-card-section>
+        <q-card-section>
+          <sprint-form
+            v-if="sprint"
+            :sprint="sprint"
+            :loading="isSubmitting"
+            :project-options="projectOptions"
+            @submit="handleUpdateSprint"
+            @cancel="showEditDialog = false"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useSprintStore } from 'src/stores/sprint.store';
 import { storeToRefs } from 'pinia';
+import { useSprintStore } from 'src/stores/sprint.store';
+import { useNotify } from 'src/composables/useNotify';
+import { useDialog } from 'src/composables/useDialog';
 import { formatDate, formatRelativeTime } from 'src/utils/formatters';
+import type { SprintUpdate } from 'src/types/models.types';
+import * as projectsApi from 'src/api/projects.api'; // 프로젝트 API 추가
 import StatusBadge from 'src/components/common/StatusBadge.vue';
+import SprintForm from 'src/components/sprint/SprintForm.vue';
+
+// ============================================
+// Composables
+// ============================================
 
 const route = useRoute();
 const router = useRouter();
 const sprintStore = useSprintStore();
+const { notifySuccess, notifyError } = useNotify();
+const { confirmDelete } = useDialog();
+
+// ============================================
+// State
+// ============================================
 
 const sprintId = Number(route.params.id);
-
-// 스토어의 상태와 게터를 가져옵니다.
 const { currentSprint: sprint, isLoading, error } = storeToRefs(sprintStore);
 
-// 페이지가 마운트될 때 스토어에서 단일 스프린트 데이터를 가져옵니다.
-onMounted(async () => {
+const showEditDialog = ref(false);
+const isSubmitting = ref(false);
+const projectOptions = ref<{ label: string; value: number }[]>([]);
+
+// ============================================
+// Methods
+// ============================================
+
+async function fetchProjectOptions() {
   try {
+    const projectResponse = await projectsApi.listProjects({ page: 1, size: 1000 });
+    projectOptions.value = projectResponse.items.map((p) => ({
+      label: p.name,
+      value: p.id,
+    }));
+  } catch (err) {
+    console.error('Failed to fetch project list:', err);
+    notifyError('프로젝트 목록을 불러오는데 실패했습니다.');
+  }
+}
+
+async function fetchSprintDetail() {
+  try {
+    // 상세 페이지에서 스프린트를 불러오는 함수는 스토어에 이미 구현되어 있습니다.
     await sprintStore.fetchSprint(sprintId);
   } catch (err) {
     console.error('스프린트 정보를 불러오는데 실패했습니다.', err);
+    // 오류 처리는 스토어에서 이미 설정하지만, 명시적으로 처리
+    if (!sprint.value) {
+      // 스프린트 데이터가 아예 없는 경우에만 에러를 설정
+    }
   }
-});
+}
 
 function handleBack() {
   void router.push('/sprints');
 }
 
-function handleEdit() {
-  // TODO: 수정 다이얼로그 열기
-  alert('수정 기능은 준비 중입니다.');
+async function handleUpdateSprint(data: SprintUpdate) {
+  if (!sprint.value) return;
+  isSubmitting.value = true;
+  try {
+    await sprintStore.updateSprint(sprint.value.id, data);
+    showEditDialog.value = false;
+    notifySuccess('스프린트가 성공적으로 수정되었습니다.');
+  } catch (err) {
+    console.error('Failed to update sprint:', err);
+    notifyError('스프린트 수정에 실패했습니다.');
+  } finally {
+    isSubmitting.value = false;
+  }
 }
+
+function handleEdit() {
+  // 수정 버튼 클릭 시 다이얼로그 열기
+  showEditDialog.value = true;
+}
+
+async function handleDelete() {
+  if (!sprint.value) return;
+
+  const confirmed = await confirmDelete(sprint.value.name);
+  if (!confirmed) return;
+
+  try {
+    await sprintStore.deleteSprint(sprint.value.id);
+    notifySuccess('스프린트가 삭제되었습니다.');
+    void router.push('/sprints');
+  } catch (err) {
+    console.error('Failed to delete sprint:', err);
+    notifyError('스프린트 삭제에 실패했습니다.');
+  }
+}
+
+// ============================================
+// Lifecycle
+// ============================================
+
+onMounted(() => {
+  void fetchSprintDetail();
+  void fetchProjectOptions(); // 수정 폼을 위해 프로젝트 목록을 미리 로드
+});
 </script>
