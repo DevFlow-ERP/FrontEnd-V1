@@ -13,9 +13,7 @@ import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 /**
  * Get paginated list of projects
  */
-export async function listProjects(
-  params?: QueryParams
-): Promise<PaginatedResponse<Project>> {
+export async function listProjects(params?: QueryParams): Promise<PaginatedResponse<Project>> {
   const response = await apiClient.get<PaginatedResponse<Project>>('/projects', {
     params,
   });
@@ -41,10 +39,7 @@ export async function createProject(data: ProjectCreate): Promise<Project> {
 /**
  * Update an existing project
  */
-export async function updateProject(
-  id: number,
-  data: ProjectUpdate
-): Promise<Project> {
+export async function updateProject(id: number, data: ProjectUpdate): Promise<Project> {
   const response = await apiClient.put<Project>(`/projects/${id}`, data);
   return response.data;
 }
@@ -61,12 +56,11 @@ export async function deleteProject(id: number): Promise<void> {
  */
 export async function getProjectsByTeam(
   teamId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Project>> {
-  const response = await apiClient.get<PaginatedResponse<Project>>(
-    `/teams/${teamId}/projects`,
-    { params }
-  );
+  const response = await apiClient.get<PaginatedResponse<Project>>(`/teams/${teamId}/projects`, {
+    params,
+  });
   return response.data;
 }
 
@@ -75,7 +69,7 @@ export async function getProjectsByTeam(
  */
 export async function getProjectsByStatus(
   status: string,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Project>> {
   const response = await apiClient.get<PaginatedResponse<Project>>('/projects', {
     params: { ...params, status },

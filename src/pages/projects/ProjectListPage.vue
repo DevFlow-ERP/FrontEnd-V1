@@ -4,17 +4,10 @@
     <div class="row items-center q-mb-lg">
       <div class="col">
         <div class="text-h4 text-weight-bold">Projects</div>
-        <div class="text-subtitle2 text-grey-7">
-          Manage your project portfolio
-        </div>
+        <div class="text-subtitle2 text-grey-7">Manage your project portfolio</div>
       </div>
       <div class="col-auto">
-        <q-btn
-          color="primary"
-          icon="add"
-          label="New Project"
-          @click="showCreateDialog = true"
-        />
+        <q-btn color="primary" icon="add" label="New Project" @click="showCreateDialog = true" />
       </div>
     </div>
 
@@ -84,11 +77,7 @@
       message="Create your first project to get started"
     >
       <template #actions>
-        <q-btn
-          color="primary"
-          label="Create Project"
-          @click="showCreateDialog = true"
-        />
+        <q-btn color="primary" label="Create Project" @click="showCreateDialog = true" />
       </template>
     </empty-state>
 
@@ -187,10 +176,7 @@ const showCreateDialog = ref(false);
 const editingProject = ref<Project | null>(null);
 const teamOptions = ref<{ label: string; value: number }[]>([]);
 
-const statusFilterOptions = [
-  { label: 'All', value: '' },
-  ...PROJECT_STATUS_OPTIONS,
-];
+const statusFilterOptions = [{ label: 'All', value: '' }, ...PROJECT_STATUS_OPTIONS];
 
 // ============================================
 // Methods

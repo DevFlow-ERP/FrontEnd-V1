@@ -1,39 +1,46 @@
-// ============================================
-// Members API - Team member management endpoints
-// ============================================
-
 import apiClient from './client';
-import type { TeamMember } from 'src/types/models.types';
+// [!code !] (시작) 'TeamMember' 관련 타입을 models.types에서 가져오도록 수정
+import type { TeamMember, TeamMemberCreate, TeamRole } from 'src/types/models.types';
+// [!code !] (끝)
 import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 
 /**
- * Get all team members (across all teams)
+ * Get paginated list of members for a team
  */
-export async function listMembers(params?: QueryParams): Promise<PaginatedResponse<TeamMember>> {
-  const response = await apiClient.get<PaginatedResponse<TeamMember>>('/members', { params });
+export async function listMembers(
+  teamId: number,
+  params?: QueryParams, // [!code !] <-- 'ProjectDetailPage.vue'가 2개의 인수를 보낼 수 있도록 이 파라미터가 필요합니다.
+): Promise<PaginatedResponse<TeamMember>> {
+  const response = await apiClient.get<PaginatedResponse<TeamMember>>(
+    `/teams/${teamId}/members`,
+    { params }, // params를 쿼리 스트링으로 전달
+  );
   return response.data;
 }
 
 /**
- * Get a single team member by ID
+ * Add a member to a team
  */
-export async function getMember(id: number): Promise<TeamMember> {
-  const response = await apiClient.get<TeamMember>(`/members/${id}`);
+export async function addMember(data: TeamMemberCreate): Promise<TeamMember> {
+  const response = await apiClient.post<TeamMember>(`/teams/${data.team_id}/members`, data);
   return response.data;
 }
 
 /**
- * Get current user's team memberships
+ * Remove a member from a team
  */
-export async function getMyMemberships(params?: QueryParams): Promise<PaginatedResponse<TeamMember>> {
-  const response = await apiClient.get<PaginatedResponse<TeamMember>>('/members/my', { params });
-  return response.data;
+export async function removeMember(teamId: number, userId: number): Promise<void> {
+  await apiClient.delete(`/teams/${teamId}/members/${userId}`);
 }
 
 /**
- * Get members by user ID
+ * Update a member's role in a team
  */
-export async function getMembersByUser(userId: number, params?: QueryParams): Promise<PaginatedResponse<TeamMember>> {
-  const response = await apiClient.get<PaginatedResponse<TeamMember>>(`/members/user/${userId}`, { params });
+export async function updateMemberRole(
+  teamId: number,
+  userId: number,
+  role: TeamRole,
+): Promise<TeamMember> {
+  const response = await apiClient.put<TeamMember>(`/teams/${teamId}/members/${userId}`, { role });
   return response.data;
 }
