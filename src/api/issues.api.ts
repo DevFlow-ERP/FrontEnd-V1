@@ -36,7 +36,7 @@ export async function createIssue(data: IssueCreate): Promise<Issue> {
  * Update an existing issue
  */
 export async function updateIssue(id: number, data: IssueUpdate): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}`, data);
+  const response = await apiClient.put<Issue>(`/issues/${id}`, data);
   return response.data;
 }
 
