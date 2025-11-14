@@ -4,7 +4,14 @@
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { Team, TeamCreate, TeamUpdate, TeamMember, TeamMemberCreate, TeamMemberUpdate } from 'src/types/models.types';
+import type {
+  Team,
+  TeamCreate,
+  TeamUpdate,
+  TeamMember,
+  TeamMemberCreate,
+  TeamMemberUpdate,
+} from 'src/types/models.types';
 import type { QueryParams } from 'src/types/api.types';
 import * as teamsApi from 'src/api/teams.api';
 
@@ -53,9 +60,7 @@ export const useTeamStore = defineStore('team', () => {
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
       filtered = filtered.filter(
-        (t) =>
-          t.name.toLowerCase().includes(query) ||
-          t.description?.toLowerCase().includes(query)
+        (t) => t.name.toLowerCase().includes(query) || t.description?.toLowerCase().includes(query),
       );
     }
 

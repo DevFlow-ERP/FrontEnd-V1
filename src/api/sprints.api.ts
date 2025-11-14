@@ -38,7 +38,7 @@ export async function createSprint(data: SprintCreate): Promise<Sprint> {
  * Update an existing sprint
  */
 export async function updateSprint(id: number, data: SprintUpdate): Promise<Sprint> {
-  const response = await apiClient.put<Sprint>(`/sprints/${id}`, data);
+  const response = await apiClient.patch<Sprint>(`/sprints/${id}`, data);
   return response.data;
 }
 

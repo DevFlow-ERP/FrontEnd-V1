@@ -125,8 +125,11 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'teams/:id',
         name: 'team-detail',
-        component: () => import('pages/IndexPage.vue'), // TODO: Create TeamDetailPage
+        // 1. 실제 생성할 페이지 경로로 변경
+        component: () => import('pages/teams/TeamDetailPage.vue'),
         meta: { title: '팀 상세' },
+        // 2. :id 파라미터를 teamId prop으로 전달 (숫자형으로)
+        props: (route) => ({ teamId: Number(route.params.id) }),
       },
 
       // Resources - Servers

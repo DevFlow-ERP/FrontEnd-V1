@@ -97,13 +97,23 @@ export async function getIssuesByProject(
 /**
  * Get issues by sprint
  */
+/**
+ * Get issues by sprint
+ */
 export async function getIssuesBySprint(
   sprintId: number,
   params?: QueryParams,
 ): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>(`/sprints/${sprintId}/issues`, {
-    params,
-  });
+  // 기존 params에 sprint_id를 쿼리 파라미터로 추가
+  const combinedParams: QueryParams = {
+    ...params,
+    sprint_id: sprintId,
+  };
+
+  const response = await apiClient.get<PaginatedResponse<Issue>>(
+    '/issues', // 올바른 엔드포인트
+    { params: combinedParams }, // 쿼리 파라미터로 전달
+  );
   return response.data;
 }
 

@@ -3,7 +3,14 @@
 // ============================================
 
 import apiClient from './client';
-import type { Team, TeamCreate, TeamUpdate, TeamMember, TeamMemberCreate, TeamMemberUpdate } from 'src/types/models.types';
+import type {
+  Team,
+  TeamCreate,
+  TeamUpdate,
+  TeamMember,
+  TeamMemberCreate,
+  TeamMemberUpdate,
+} from 'src/types/models.types';
 import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 
 // ============================================
@@ -56,8 +63,13 @@ export async function deleteTeam(id: number): Promise<void> {
 /**
  * Get team members
  */
-export async function getTeamMembers(teamId: number, params?: QueryParams): Promise<PaginatedResponse<TeamMember>> {
-  const response = await apiClient.get<PaginatedResponse<TeamMember>>(`/teams/${teamId}/members`, { params });
+export async function getTeamMembers(
+  teamId: number,
+  params?: QueryParams,
+): Promise<PaginatedResponse<TeamMember>> {
+  const response = await apiClient.get<PaginatedResponse<TeamMember>>(`/teams/${teamId}/members`, {
+    params,
+  });
   return response.data;
 }
 
@@ -72,7 +84,11 @@ export async function addTeamMember(teamId: number, data: TeamMemberCreate): Pro
 /**
  * Update a team member's role
  */
-export async function updateTeamMember(teamId: number, memberId: number, data: TeamMemberUpdate): Promise<TeamMember> {
+export async function updateTeamMember(
+  teamId: number,
+  memberId: number,
+  data: TeamMemberUpdate,
+): Promise<TeamMember> {
   const response = await apiClient.patch<TeamMember>(`/teams/${teamId}/members/${memberId}`, data);
   return response.data;
 }
