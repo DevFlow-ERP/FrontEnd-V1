@@ -38,7 +38,7 @@ export async function createSprint(data: SprintCreate): Promise<Sprint> {
  * Update an existing sprint
  */
 export async function updateSprint(id: number, data: SprintUpdate): Promise<Sprint> {
-  const response = await apiClient.patch<Sprint>(`/sprints/${id}`, data);
+  const response = await apiClient.put<Sprint>(`/sprints/${id}`, data);
   return response.data;
 }
 
@@ -76,15 +76,24 @@ export async function completeSprint(id: number): Promise<Sprint> {
 /**
  * Get sprints by project
  */
-export async function getSprintsByProject(projectId: number, params?: QueryParams): Promise<PaginatedResponse<Sprint>> {
-  const response = await apiClient.get<PaginatedResponse<Sprint>>(`/projects/${projectId}/sprints`, { params });
+export async function getSprintsByProject(
+  projectId: number,
+  params?: QueryParams,
+): Promise<PaginatedResponse<Sprint>> {
+  const response = await apiClient.get<PaginatedResponse<Sprint>>(
+    `/projects/${projectId}/sprints`,
+    { params },
+  );
   return response.data;
 }
 
 /**
  * Get sprints by status
  */
-export async function getSprintsByStatus(status: string, params?: QueryParams): Promise<PaginatedResponse<Sprint>> {
+export async function getSprintsByStatus(
+  status: string,
+  params?: QueryParams,
+): Promise<PaginatedResponse<Sprint>> {
   const response = await apiClient.get<PaginatedResponse<Sprint>>('/sprints', {
     params: { ...params, status },
   });
