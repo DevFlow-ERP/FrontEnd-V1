@@ -51,9 +51,13 @@ export async function deleteIssue(id: number): Promise<void> {
  * Update issue status
  */
 export async function updateIssueStatus(id: number, status: string): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/status`, {
-    status,
-  });
+  const response = await apiClient.patch<Issue>(
+    `/issues/${id}/status`,
+    null, // 1. JSON 본문(body)을 null로 비웁니다.
+    {
+      params: { status }, // 2. 데이터를 쿼리 파라미터로 보냅니다.
+    },
+  );
   return response.data;
 }
 

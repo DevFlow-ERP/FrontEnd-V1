@@ -9,11 +9,13 @@ import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
  */
 export async function listMembers(
   teamId: number,
-  params?: QueryParams, // [!code !] <-- 'ProjectDetailPage.vue'가 2개의 인수를 보낼 수 있도록 이 파라미터가 필요합니다.
+  params?: QueryParams,
 ): Promise<PaginatedResponse<TeamMember>> {
   const response = await apiClient.get<PaginatedResponse<TeamMember>>(
-    `/teams/${teamId}/members`,
-    { params }, // params를 쿼리 스트링으로 전달
+    `/members/team/${teamId}`, // <--- 이렇게 수정합니다.
+    {
+      params,
+    },
   );
   return response.data;
 }
