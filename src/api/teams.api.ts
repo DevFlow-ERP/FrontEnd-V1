@@ -45,7 +45,7 @@ export async function createTeam(data: TeamCreate): Promise<Team> {
  * Update an existing team
  */
 export async function updateTeam(id: number, data: TeamUpdate): Promise<Team> {
-  const response = await apiClient.patch<Team>(`/teams/${id}`, data);
+  const response = await apiClient.put<Team>(`/teams/${id}`, data);
   return response.data;
 }
 

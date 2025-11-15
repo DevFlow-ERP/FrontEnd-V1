@@ -11,10 +11,16 @@ export async function listMembers(
   teamId: number,
   params?: QueryParams,
 ): Promise<PaginatedResponse<TeamMember>> {
+  // team_id를 기존 params에 추가
+  const combinedParams: QueryParams = {
+    ...params,
+    team_id: teamId,
+  };
+
   const response = await apiClient.get<PaginatedResponse<TeamMember>>(
-    `/members/team/${teamId}`, // <--- 이렇게 수정합니다.
+    '/members', // [!] 올바른 URL
     {
-      params,
+      params: combinedParams, // [!] 쿼리 파라미터로 전달
     },
   );
   return response.data;
@@ -43,6 +49,9 @@ export async function updateMemberRole(
   userId: number,
   role: TeamRole,
 ): Promise<TeamMember> {
-  const response = await apiClient.put<TeamMember>(`/teams/${teamId}/members/${userId}`, { role });
+  const response = await apiClient.patch<TeamMember>(
+    `/teams/${teamId}/members/${userId}/role`, // [!] 올바른 URL
+    { role }, // [!] PATCH 메소드 사용
+  );
   return response.data;
 }

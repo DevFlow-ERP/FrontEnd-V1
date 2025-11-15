@@ -13,7 +13,7 @@
             {{ currentTeam.description }}
           </div>
         </div>
-        <q-btn color="primary" icon="o_edit" label="팀 수정" />
+        <q-btn color="primary" label="팀 수정" />
       </div>
 
       <div class="row q-col-gutter-md q-mb-lg">
