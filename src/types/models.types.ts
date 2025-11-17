@@ -395,3 +395,12 @@ export interface DeploymentUpdate {
   error_message?: string;
   log_url?: string;
 }
+
+export interface ProjectStats {
+  total_sprints: number;
+  active_sprints: number;
+  total_issues: number;
+  open_issues: number;
+  completed_issues: number;
+  team_members: number;
+}

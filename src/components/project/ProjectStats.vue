@@ -4,15 +4,9 @@
       <q-card-section>
         <div class="text-h6 q-mb-md">Project Statistics</div>
 
-        <q-linear-progress
-          v-if="loading"
-          indeterminate
-          color="primary"
-          class="q-mb-md"
-        />
+        <q-linear-progress v-if="isLoading" indeterminate color="primary" class="q-mb-md" />
 
-        <div v-else class="stats-grid">
-          <!-- Total Sprints -->
+        <div v-else-if="stats" class="stats-grid">
           <div class="stat-item">
             <q-icon name="view_week" size="32px" color="primary" />
             <div class="stat-content">
@@ -21,7 +15,6 @@
             </div>
           </div>
 
-          <!-- Active Sprints -->
           <div class="stat-item">
             <q-icon name="play_circle" size="32px" color="positive" />
             <div class="stat-content">
@@ -30,7 +23,6 @@
             </div>
           </div>
 
-          <!-- Total Issues -->
           <div class="stat-item">
             <q-icon name="assignment" size="32px" color="info" />
             <div class="stat-content">
@@ -39,7 +31,6 @@
             </div>
           </div>
 
-          <!-- Open Issues -->
           <div class="stat-item">
             <q-icon name="warning" size="32px" color="warning" />
             <div class="stat-content">
@@ -48,7 +39,6 @@
             </div>
           </div>
 
-          <!-- Completed Issues -->
           <div class="stat-item">
             <q-icon name="check_circle" size="32px" color="positive" />
             <div class="stat-content">
@@ -57,7 +47,6 @@
             </div>
           </div>
 
-          <!-- Team Members -->
           <div class="stat-item">
             <q-icon name="people" size="32px" color="secondary" />
             <div class="stat-content">
@@ -67,17 +56,13 @@
           </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div v-if="!loading" class="q-mt-lg">
-          <div class="text-body2 text-grey-7 q-mb-xs">
-            Completion Rate: {{ completionRate }}%
-          </div>
-          <q-linear-progress
-            :value="completionRate / 100"
-            color="positive"
-            size="12px"
-            rounded
-          />
+        <div v-else-if="!isLoading && !stats" class="text-grey-7 q-pa-md">
+          Failed to load project statistics.
+        </div>
+
+        <div v-if="!isLoading && stats" class="q-mt-lg">
+          <div class="text-body2 text-grey-7 q-mb-xs">Completion Rate: {{ completionRate }}%</div>
+          <q-linear-progress :value="completionRate / 100" color="positive" size="12px" rounded />
         </div>
       </q-card-section>
     </q-card>
@@ -85,7 +70,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { getProjectStats } from 'src/api/projects.api';
+import type { ProjectStats } from 'src/types/models.types';
+import { useNotify } from 'src/composables/useNotify';
 
 // ============================================
 // Props & Emits
@@ -93,32 +81,23 @@ import { ref, computed, onMounted, watch } from 'vue';
 
 interface Props {
   projectId: number;
-  loading?: boolean;
 }
-
-const props = withDefaults(defineProps<Props>(), {
-  loading: false,
-});
+const props = defineProps<Props>();
 
 // ============================================
 // State
 // ============================================
 
-const stats = ref({
-  total_sprints: 0,
-  active_sprints: 0,
-  total_issues: 0,
-  open_issues: 0,
-  completed_issues: 0,
-  team_members: 0,
-});
+const stats = ref<ProjectStats | null>(null);
+const isLoading = ref(false);
+const { notifyError } = useNotify();
 
 // ============================================
 // Computed
 // ============================================
 
 const completionRate = computed(() => {
-  if (stats.value.total_issues === 0) return 0;
+  if (!stats.value || stats.value.total_issues === 0) return 0;
   return Math.round((stats.value.completed_issues / stats.value.total_issues) * 100);
 });
 
@@ -127,23 +106,19 @@ const completionRate = computed(() => {
 // ============================================
 
 async function fetchStats() {
-  // TODO: Implement API call to fetch project statistics
-  // For now, using mock data
-  try {
-    // Simulating API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  if (!props.projectId) return;
 
-    // Mock data
-    stats.value = {
-      total_sprints: 8,
-      active_sprints: 2,
-      total_issues: 47,
-      open_issues: 23,
-      completed_issues: 24,
-      team_members: 6,
-    };
+  isLoading.value = true;
+  try {
+    // 실제 API 호출
+    stats.value = await getProjectStats(props.projectId);
   } catch (error) {
     console.error('Failed to fetch project stats:', error);
+    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    notifyError('Failed to fetch project stats', message);
+    stats.value = null;
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -151,19 +126,19 @@ async function fetchStats() {
 // Lifecycle
 // ============================================
 
-onMounted(() => {
-  void fetchStats();
-});
-
 watch(
   () => props.projectId,
-  () => {
-    void fetchStats();
-  }
+  (newId) => {
+    if (newId) {
+      void fetchStats();
+    }
+  },
+  { immediate: true }, // 컴포넌트 마운트 시 즉시 실행
 );
 </script>
 
 <style lang="scss" scoped>
+/* 목업 UI의 스타일을 그대로 사용 */
 .project-stats {
   .stats-grid {
     display: grid;

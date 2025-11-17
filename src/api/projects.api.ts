@@ -3,7 +3,7 @@
 // ============================================
 
 import apiClient from './client';
-import type { Project, ProjectCreate, ProjectUpdate } from 'src/types/models.types';
+import type { Project, ProjectCreate, ProjectUpdate, ProjectStats } from 'src/types/models.types';
 import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 
 // ============================================
@@ -74,5 +74,10 @@ export async function getProjectsByStatus(
   const response = await apiClient.get<PaginatedResponse<Project>>('/projects', {
     params: { ...params, status },
   });
+  return response.data;
+}
+
+export async function getProjectStats(projectId: number): Promise<ProjectStats> {
+  const response = await apiClient.get<ProjectStats>(`/projects/${projectId}/stats`);
   return response.data;
 }
