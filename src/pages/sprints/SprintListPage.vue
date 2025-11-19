@@ -154,7 +154,8 @@
         </q-card-section>
         <q-card-section>
           <sprint-form
-            :sprint="editingSprint"
+            :sprint="editingSprint ? editingSprint : undefined"
+            :project-id="editingSprint?.project_id ?? 0"
             :loading="sprintStore.isLoading"
             :project-options="projectOptions"
             @submit="handleSubmit"

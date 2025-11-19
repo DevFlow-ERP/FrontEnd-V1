@@ -1,155 +1,157 @@
 <template>
-  <q-form @submit="handleSubmit" class="sprint-form">
-    <!-- Name -->
+  <q-form @submit="handleSubmit" class="q-gutter-md">
     <q-input
-      v-model="formData.name"
+      v-model="form.name"
       label="Sprint Name *"
+      outlined
+      dense
       :rules="[(val) => !!val || 'Name is required']"
-      outlined
-      class="q-mb-md"
     />
 
-    <!-- Project -->
-    <q-select
-      v-model="formData.project_id"
-      :options="projectOptions"
-      label="Project *"
-      :rules="[(val) => !!val || 'Project is required']"
-      outlined
-      emit-value
-      map-options
-      class="q-mb-md"
-    />
+    <q-input v-model="form.goal" label="Sprint Goal" outlined dense type="textarea" rows="3" />
 
-    <!-- Goal -->
-    <q-input
-      v-model="formData.goal"
-      label="Sprint Goal"
-      type="textarea"
-      rows="3"
-      outlined
-      class="q-mb-md"
-    />
-
-    <!-- Dates -->
-    <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-12 col-sm-6">
-        <q-input
-          v-model="formData.start_date"
-          label="Start Date *"
-          type="date"
-          :rules="[(val) => !!val || 'Start date is required']"
-          outlined
-        />
+    <div class="row q-col-gutter-sm">
+      <div class="col-6">
+        <q-input v-model="form.start_date" label="Start Date" outlined dense type="date" />
       </div>
-      <div class="col-12 col-sm-6">
-        <q-input
-          v-model="formData.end_date"
-          label="End Date *"
-          type="date"
-          :rules="[
-            (val) => !!val || 'End date is required',
-            (val) => !formData.start_date || val >= formData.start_date || 'End date must be after start date'
-          ]"
-          outlined
-        />
+      <div class="col-6">
+        <q-input v-model="form.end_date" label="End Date" outlined dense type="date" />
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="row q-col-gutter-sm justify-end">
-      <div class="col-auto">
-        <q-btn
-          label="Cancel"
-          flat
-          @click="handleCancel"
-        />
-      </div>
-      <div class="col-auto">
-        <q-btn
-          :label="isEdit ? 'Update' : 'Create'"
-          type="submit"
-          color="primary"
-          :loading="loading"
-        />
-      </div>
+    <q-select
+      v-model="form.status"
+      :options="statusOptions"
+      label="Status"
+      outlined
+      dense
+      emit-value
+      map-options
+    >
+      <template v-slot:option="scope">
+        <q-item v-bind="scope.itemProps">
+          <q-item-section avatar>
+            <q-icon
+              :name="getStatusIcon(scope.opt.value)"
+              :color="getStatusColor(scope.opt.value)"
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ scope.opt.label }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+      <template v-slot:selected-item="scope">
+        <div class="row items-center q-gutter-x-sm">
+          <q-icon :name="getStatusIcon(scope.opt.value)" :color="getStatusColor(scope.opt.value)" />
+          <span>{{ scope.opt.label }}</span>
+        </div>
+      </template>
+    </q-select>
+    <div class="row justify-end q-gutter-sm">
+      <q-btn label="Cancel" flat color="grey" v-close-popup />
+      <q-btn
+        :label="isEdit ? 'Update' : 'Create'"
+        type="submit"
+        color="primary"
+        :loading="loading"
+      />
     </div>
   </q-form>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import type { Sprint, SprintCreate, SprintUpdate } from 'src/types/models.types';
-
-// ============================================
-// Props
-// ============================================
+import { reactive, onMounted, computed } from 'vue';
+import type { Sprint, SprintCreate, SprintUpdate, SprintStatus } from 'src/types/models.types';
 
 interface Props {
-  sprint?: Sprint | null;
+  sprint?: Sprint | undefined; // [!] undefined를 명시적으로 추가하여 타입 호환성 문제 해결
+  projectId: number;
   loading?: boolean;
-  projectOptions?: { label: string; value: number }[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  sprint: null,
   loading: false,
-  projectOptions: () => [],
 });
 
-// ============================================
-// Emits
-// ============================================
-
 const emit = defineEmits<{
-  submit: [data: SprintCreate | SprintUpdate];
-  cancel: [];
+  (e: 'submit', data: SprintCreate | SprintUpdate): void;
 }>();
 
-// ============================================
 // State
-// ============================================
+const isEdit = computed(() => !!props.sprint);
 
-const isEdit = ref(!!props.sprint);
+// 상태 옵션 정의
+const statusOptions = [
+  { label: 'Planning', value: 'planning' },
+  { label: 'Active', value: 'active' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Cancelled', value: 'cancelled' },
+];
 
-const formData = ref<SprintCreate>({
+// Form Data
+const form = reactive({
   name: '',
-  project_id: 0,
   goal: '',
   start_date: '',
   end_date: '',
+  status: 'planning' as SprintStatus, // 기본값 설정
 });
 
-// ============================================
-// Watch
-// ============================================
-
-watch(
-  () => props.sprint,
-  (sprint) => {
-    if (sprint) {
-      isEdit.value = true;
-      formData.value = {
-        name: sprint.name,
-        project_id: sprint.project_id,
-        goal: sprint.goal || '',
-        start_date: sprint.start_date || '',
-        end_date: sprint.end_date || '',
-      };
-    }
-  },
-  { immediate: true }
-);
-
-// ============================================
-// Methods
-// ============================================
-
-function handleSubmit() {
-  emit('submit', formData.value);
+// Helper Functions for UI
+function getStatusIcon(status: string) {
+  switch (status) {
+    case 'active':
+      return 'play_circle';
+    case 'completed':
+      return 'check_circle';
+    case 'cancelled':
+      return 'cancel';
+    default:
+      return 'event_note'; // planning
+  }
 }
 
-function handleCancel() {
-  emit('cancel');
+function getStatusColor(status: string) {
+  switch (status) {
+    case 'active':
+      return 'primary';
+    case 'completed':
+      return 'positive';
+    case 'cancelled':
+      return 'negative';
+    default:
+      return 'grey'; // planning
+  }
+}
+
+// Initialize Form
+onMounted(() => {
+  if (props.sprint) {
+    form.name = props.sprint.name;
+    form.goal = props.sprint.goal || '';
+    // [!] 배열 접근 결과가 undefined일 수 있으므로 ?? '' 추가
+    form.start_date = props.sprint.start_date ? (props.sprint.start_date.split('T')[0] ?? '') : '';
+    form.end_date = props.sprint.end_date ? (props.sprint.end_date.split('T')[0] ?? '') : '';
+    form.status = props.sprint.status; // 기존 상태 불러오기
+  }
+});
+
+// Submit Handler
+function handleSubmit() {
+  const data = {
+    ...form,
+    start_date: form.start_date || undefined,
+    end_date: form.end_date || undefined,
+  };
+
+  if (isEdit.value) {
+    emit('submit', data as SprintUpdate);
+  } else {
+    emit('submit', {
+      ...data,
+      project_id: props.projectId,
+    } as SprintCreate);
+  }
 }
 </script>

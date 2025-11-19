@@ -120,10 +120,11 @@
           <sprint-form
             v-if="sprint"
             :sprint="sprint"
+            :project-id="sprint.project_id"
             :loading="isSubmitting"
             :project-options="projectOptions"
-            @submit="handleUpdateSprint"
             @cancel="showEditDialog = false"
+            @submit="handleUpdateSprint"
           />
         </q-card-section>
       </q-card>
