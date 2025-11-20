@@ -50,8 +50,8 @@ export async function updateMemberRole(
   role: TeamRole,
 ): Promise<TeamMember> {
   const response = await apiClient.patch<TeamMember>(
-    `/teams/${teamId}/members/${userId}/role`, // [!] 올바른 URL
-    { role }, // [!] PATCH 메소드 사용
+    `/teams/${teamId}/members/${userId}/role`, // [수정] /role 추가
+    { role },
   );
   return response.data;
 }

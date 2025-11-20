@@ -58,9 +58,10 @@ export async function getProjectsByTeam(
   teamId: number,
   params?: QueryParams,
 ): Promise<PaginatedResponse<Project>> {
-  const response = await apiClient.get<PaginatedResponse<Project>>(`/teams/${teamId}/projects`, {
-    params,
-  });
+  const response = await apiClient.get<PaginatedResponse<Project>>(
+    `/projects/team/${teamId}`, // [수정] URL 변경
+    { params },
+  );
   return response.data;
 }
 

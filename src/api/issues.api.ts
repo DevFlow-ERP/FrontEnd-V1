@@ -75,7 +75,7 @@ export async function assignIssue(id: number, assignee_id: number | null): Promi
  * Move issue to a sprint
  */
 export async function moveIssueToSprint(id: number, sprint_id: number | null): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/move`, {
+  const response = await apiClient.patch<Issue>(`/issues/${id}/sprint`, {
     sprint_id,
   });
   return response.data;
@@ -88,8 +88,8 @@ export async function getIssuesByProject(
   projectId: number,
   params?: QueryParams,
 ): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>(`/projects/${projectId}/issues`, {
-    params,
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
+    params: { ...params, project_id: projectId },
   });
   return response.data;
 }
@@ -97,9 +97,7 @@ export async function getIssuesByProject(
 /**
  * Get issues by sprint
  */
-/**
- * Get issues by sprint
- */
+
 export async function getIssuesBySprint(
   sprintId: number,
   params?: QueryParams,
@@ -121,6 +119,6 @@ export async function getIssuesBySprint(
  * Get issues assigned to current user
  */
 export async function getMyIssues(params?: QueryParams): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues/me', { params });
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues/my', { params });
   return response.data;
 }

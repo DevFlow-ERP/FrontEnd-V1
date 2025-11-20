@@ -89,7 +89,9 @@ export async function updateTeamMember(
   memberId: number,
   data: TeamMemberUpdate,
 ): Promise<TeamMember> {
-  const response = await apiClient.patch<TeamMember>(`/teams/${teamId}/members/${memberId}`, data);
+  const response = await apiClient.patch<TeamMember>(`/teams/${teamId}/members/${memberId}/role`, {
+    role: data.role,
+  });
   return response.data;
 }
 

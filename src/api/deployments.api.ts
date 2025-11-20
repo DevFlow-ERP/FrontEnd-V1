@@ -15,7 +15,9 @@ import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 /**
  * Get paginated list of deployments
  */
-export async function listDeployments(params?: QueryParams): Promise<PaginatedResponse<Deployment>> {
+export async function listDeployments(
+  params?: QueryParams,
+): Promise<PaginatedResponse<Deployment>> {
   const response = await apiClient.get<PaginatedResponse<Deployment>>('/deployments', { params });
   return response.data;
 }
@@ -40,7 +42,7 @@ export async function createDeployment(data: DeploymentCreate): Promise<Deployme
  * Update an existing deployment
  */
 export async function updateDeployment(id: number, data: DeploymentUpdate): Promise<Deployment> {
-  const response = await apiClient.patch<Deployment>(`/deployments/${id}`, data);
+  const response = await apiClient.put<Deployment>(`/deployments/${id}`, data);
   return response.data;
 }
 
@@ -56,9 +58,11 @@ export async function deleteDeployment(id: number): Promise<void> {
  */
 export async function updateDeploymentStatus(
   id: number,
-  status: DeploymentStatus
+  status: DeploymentStatus,
 ): Promise<Deployment> {
-  const response = await apiClient.patch<Deployment>(`/deployments/${id}/status`, { status });
+  const response = await apiClient.patch<Deployment>(`/deployments/${id}/status`, null, {
+    params: { status },
+  });
   return response.data;
 }
 
@@ -68,12 +72,13 @@ export async function updateDeploymentStatus(
 export async function rollbackDeployment(
   id: number,
   targetDeploymentId: number,
-  notes?: string
+  notes?: string,
 ): Promise<Deployment> {
-  const response = await apiClient.post<Deployment>(`/deployments/${id}/rollback`, {
-    target_deployment_id: targetDeploymentId,
-    notes,
-  });
+  const response = await apiClient.post<Deployment>(
+    `/deployments/${targetDeploymentId}/rollback`,
+    null,
+    { params: { notes } },
+  );
   return response.data;
 }
 
@@ -82,11 +87,11 @@ export async function rollbackDeployment(
  */
 export async function getDeploymentsByService(
   serviceId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Deployment>> {
   const response = await apiClient.get<PaginatedResponse<Deployment>>(
-    `/services/${serviceId}/deployments`,
-    { params }
+    `/deployments/service/${serviceId}`,
+    { params },
   );
   return response.data;
 }
@@ -96,7 +101,7 @@ export async function getDeploymentsByService(
  */
 export async function getDeploymentsByEnvironment(
   environment: string,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Deployment>> {
   const response = await apiClient.get<PaginatedResponse<Deployment>>('/deployments', {
     params: { environment, ...params },
@@ -109,7 +114,7 @@ export async function getDeploymentsByEnvironment(
  */
 export async function getDeploymentsByStatus(
   status: DeploymentStatus,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Deployment>> {
   const response = await apiClient.get<PaginatedResponse<Deployment>>('/deployments', {
     params: { status, ...params },
@@ -122,7 +127,7 @@ export async function getDeploymentsByStatus(
  */
 export async function getDeploymentsByType(
   type: DeploymentType,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Deployment>> {
   const response = await apiClient.get<PaginatedResponse<Deployment>>('/deployments', {
     params: { type, ...params },

@@ -80,10 +80,9 @@ export async function getSprintsByProject(
   projectId: number,
   params?: QueryParams,
 ): Promise<PaginatedResponse<Sprint>> {
-  const response = await apiClient.get<PaginatedResponse<Sprint>>(
-    `/projects/${projectId}/sprints`,
-    { params },
-  );
+  const response = await apiClient.get<PaginatedResponse<Sprint>>(`/sprints/project/${projectId}`, {
+    params,
+  });
   return response.data;
 }
 
