@@ -87,6 +87,7 @@ export interface TeamCreate {
   name: string;
   description?: string;
   is_active?: boolean;
+  member_ids?: number[];
 }
 
 export interface TeamUpdate {

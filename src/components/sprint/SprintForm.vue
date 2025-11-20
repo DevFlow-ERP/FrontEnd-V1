@@ -1,5 +1,17 @@
 <template>
   <q-form @submit="handleSubmit" class="q-gutter-md">
+    <q-select
+      v-model="form.project_id"
+      :options="projectOptions"
+      label="Project *"
+      outlined
+      dense
+      emit-value
+      map-options
+      :rules="[(val) => (val !== 0 && !!val) || 'Project is required']"
+      :disable="isEdit"
+    />
+
     <q-input
       v-model="form.name"
       label="Sprint Name *"
@@ -48,6 +60,7 @@
         </div>
       </template>
     </q-select>
+
     <div class="row justify-end q-gutter-sm">
       <q-btn label="Cancel" flat color="grey" v-close-popup />
       <q-btn
@@ -61,17 +74,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, computed } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import type { Sprint, SprintCreate, SprintUpdate, SprintStatus } from 'src/types/models.types';
 
+// Props 정의
 interface Props {
-  sprint?: Sprint | undefined; // [!] undefined를 명시적으로 추가하여 타입 호환성 문제 해결
+  sprint?: Sprint | undefined;
   projectId: number;
   loading?: boolean;
+  // [추가됨] 프로젝트 목록 옵션 (label, value 형태)
+  projectOptions?: { label: string; value: number }[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
+  projectOptions: () => [],
 });
 
 const emit = defineEmits<{
@@ -81,7 +98,7 @@ const emit = defineEmits<{
 // State
 const isEdit = computed(() => !!props.sprint);
 
-// 상태 옵션 정의
+// 상태 옵션
 const statusOptions = [
   { label: 'Planning', value: 'planning' },
   { label: 'Active', value: 'active' },
@@ -91,14 +108,15 @@ const statusOptions = [
 
 // Form Data
 const form = reactive({
+  project_id: 0, // [중요] form 내부에 project_id 관리
   name: '',
   goal: '',
   start_date: '',
   end_date: '',
-  status: 'planning' as SprintStatus, // 기본값 설정
+  status: 'planning' as SprintStatus,
 });
 
-// Helper Functions for UI
+// Helper Functions
 function getStatusIcon(status: string) {
   switch (status) {
     case 'active':
@@ -108,7 +126,7 @@ function getStatusIcon(status: string) {
     case 'cancelled':
       return 'cancel';
     default:
-      return 'event_note'; // planning
+      return 'event_note';
   }
 }
 
@@ -121,36 +139,56 @@ function getStatusColor(status: string) {
     case 'cancelled':
       return 'negative';
     default:
-      return 'grey'; // planning
+      return 'grey';
   }
 }
 
-// Initialize Form
-onMounted(() => {
-  if (props.sprint) {
-    form.name = props.sprint.name;
-    form.goal = props.sprint.goal || '';
-    // [!] 배열 접근 결과가 undefined일 수 있으므로 ?? '' 추가
-    form.start_date = props.sprint.start_date ? (props.sprint.start_date.split('T')[0] ?? '') : '';
-    form.end_date = props.sprint.end_date ? (props.sprint.end_date.split('T')[0] ?? '') : '';
-    form.status = props.sprint.status; // 기존 상태 불러오기
-  }
-});
+// [수정됨] 초기화 로직을 watch로 변경하여 dialog 열릴 때마다 데이터 갱신
+watch(
+  () => props.sprint,
+  (sprint) => {
+    if (sprint) {
+      // 수정 모드
+      form.project_id = sprint.project_id;
+      form.name = sprint.name;
+      form.goal = sprint.goal || '';
+      form.start_date = sprint.start_date ? (sprint.start_date.split('T')[0] ?? '') : '';
+      form.end_date = sprint.end_date ? (sprint.end_date.split('T')[0] ?? '') : '';
+      form.status = sprint.status;
+    } else {
+      // 생성 모드: props.projectId가 있으면(필터링된 상태 등) 기본값으로 사용, 없으면 0
+      form.project_id = props.projectId || 0;
+      form.name = '';
+      form.goal = '';
+      form.start_date = '';
+      form.end_date = '';
+      form.status = 'planning';
+    }
+  },
+  { immediate: true },
+);
 
 // Submit Handler
 function handleSubmit() {
+  // 날짜 빈 문자열 처리 (백엔드 422 에러 방지)
+  const startDate = form.start_date === '' ? null : form.start_date;
+  const endDate = form.end_date === '' ? null : form.end_date;
+
   const data = {
-    ...form,
-    start_date: form.start_date || undefined,
-    end_date: form.end_date || undefined,
+    name: form.name,
+    goal: form.goal,
+    status: form.status,
+    start_date: startDate,
+    end_date: endDate,
   };
 
   if (isEdit.value) {
     emit('submit', data as SprintUpdate);
   } else {
+    // [핵심 수정] props.projectId 대신 form.project_id 사용
     emit('submit', {
       ...data,
-      project_id: props.projectId,
+      project_id: form.project_id,
     } as SprintCreate);
   }
 }
