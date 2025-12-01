@@ -70,7 +70,7 @@ watch(
     if (newMember) {
       form.value = {
         role: newMember.role,
-        full_name: newMember.user.full_name || '',
+        full_name: newMember.user?.full_name || '', // [수정] Optional Chaining 추가
       };
     }
   },

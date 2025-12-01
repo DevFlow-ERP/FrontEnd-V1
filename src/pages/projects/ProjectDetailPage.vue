@@ -159,15 +159,15 @@
 
             <q-card v-else flat bordered>
               <q-list separator>
-                <q-item v-for="member in teamMembers" :key="member.user.id">
+                <q-item v-for="member in teamMembers" :key="member.id">
                   <q-item-section avatar>
                     <q-avatar color="primary" text-color="white">
-                      {{ member.user.full_name?.charAt(0).toUpperCase() || '?' }}
+                      {{ member.user?.full_name?.charAt(0).toUpperCase() || '?' }}
                     </q-avatar>
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ member.user.full_name }}</q-item-label>
-                    <q-item-label caption>{{ member.user.email }}</q-item-label>
+                    <q-item-label>{{ member.user?.full_name }}</q-item-label>
+                    <q-item-label caption>{{ member.user?.email }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-badge :label="member.role" color="blue-grey-6" />

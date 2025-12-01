@@ -26,11 +26,11 @@
 
         <q-item-section>
           <q-item-label class="text-weight-bold">
-            {{ member.user.full_name || member.user.username }}
+            {{ member.user?.full_name || member.user?.username }}
           </q-item-label>
           <q-item-label caption>
             <status-badge type="team-role" :value="member.role" size="sm" />
-            • {{ member.user.email }}
+            • {{ member.user?.email }}
           </q-item-label>
         </q-item-section>
 

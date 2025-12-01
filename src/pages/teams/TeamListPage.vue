@@ -1,25 +1,23 @@
 <template>
   <q-page class="team-list-page">
     <div class="q-pa-md">
-      <!-- Page Header -->
       <div class="row items-center justify-between q-mb-md">
         <div class="col">
           <h4 class="text-h4 q-my-none">Teams</h4>
-          <div class="text-body2 text-grey-7">
-            Manage teams and members
-          </div>
+          <div class="text-body2 text-grey-7">Manage teams and members</div>
         </div>
-        <div class="col-auto">
+        <div class="col-auto row q-gutter-sm">
           <q-btn
-            color="primary"
-            label="New Team"
-            icon="add"
-            @click="showCreateDialog = true"
+            color="secondary"
+            label="New User"
+            icon="person_add"
+            outline
+            @click="openCreateUserDialog"
           />
+          <q-btn color="primary" label="New Team" icon="add" @click="showCreateDialog = true" />
         </div>
       </div>
 
-      <!-- Search -->
       <q-card flat bordered class="q-mb-md">
         <q-card-section>
           <q-input
@@ -37,7 +35,6 @@
         </q-card-section>
       </q-card>
 
-      <!-- Team List -->
       <div v-if="teamStore.isLoading" class="row justify-center q-pa-xl">
         <q-spinner-dots size="50px" color="primary" />
       </div>
@@ -48,21 +45,14 @@
           title="No teams found"
           description="Create your first team to get started"
         >
-          <q-btn
-            color="primary"
-            label="Create Team"
-            @click="showCreateDialog = true"
-          />
+          <q-btn color="primary" label="Create Team" @click="showCreateDialog = true" />
         </empty-state>
       </div>
 
       <div v-else>
-        <!-- View Mode Toggle -->
         <div class="row items-center justify-between q-mb-md">
           <div class="col-auto">
-            <div class="text-subtitle2 text-grey-7">
-              {{ teamStore.totalCount }} team(s) found
-            </div>
+            <div class="text-subtitle2 text-grey-7">{{ teamStore.totalCount }} team(s) found</div>
           </div>
           <div class="col-auto">
             <q-btn-toggle
@@ -77,7 +67,6 @@
           </div>
         </div>
 
-        <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="row q-col-gutter-md">
           <div
             v-for="team in teamStore.filteredTeams"
@@ -94,7 +83,6 @@
           </div>
         </div>
 
-        <!-- List View -->
         <q-card v-else flat bordered>
           <q-list separator>
             <q-item
@@ -116,9 +104,7 @@
                 <q-chip v-if="team.is_active" color="positive" text-color="white" size="sm">
                   Active
                 </q-chip>
-                <q-chip v-else color="grey" text-color="white" size="sm">
-                  Inactive
-                </q-chip>
+                <q-chip v-else color="grey" text-color="white" size="sm"> Inactive </q-chip>
               </q-item-section>
 
               <q-item-section side>
@@ -149,7 +135,6 @@
           </q-list>
         </q-card>
 
-        <!-- Pagination -->
         <div class="row justify-center q-mt-md">
           <common-pagination
             :page="teamStore.currentPage"
@@ -162,7 +147,6 @@
       </div>
     </div>
 
-    <!-- Create/Edit Dialog -->
     <q-dialog v-model="showCreateDialog">
       <q-card style="min-width: 600px">
         <q-card-section class="row items-center">
@@ -181,6 +165,8 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <UserCreateDialog v-model="showCreateUserDialog" @created="handleUserCreated" />
   </q-page>
 </template>
 
@@ -190,11 +176,13 @@ import { useRouter } from 'vue-router';
 import { useTeamStore } from 'src/stores/team.store';
 import { useNotify } from 'src/composables/useNotify';
 import { useDialog } from 'src/composables/useDialog';
-import type { Team, TeamCreate, TeamUpdate } from 'src/types/models.types';
+import type { Team, TeamCreate, TeamUpdate, User } from 'src/types/models.types';
 import TeamCard from 'src/components/team/TeamCard.vue';
 import TeamForm from 'src/components/team/TeamForm.vue';
 import CommonPagination from 'src/components/common/Pagination.vue';
 import EmptyState from 'src/components/common/EmptyState.vue';
+// [추가] UserCreateDialog 임포트
+import UserCreateDialog from 'src/components/users/UserCreateDialog.vue';
 
 // ============================================
 // Composables
@@ -213,9 +201,23 @@ const viewMode = ref<'grid' | 'list'>('grid');
 const showCreateDialog = ref(false);
 const editingTeam = ref<Team | null>(null);
 
+// [추가] 유저 생성 다이얼로그 상태
+const showCreateUserDialog = ref(false);
+
 // ============================================
 // Methods
 // ============================================
+
+// [추가] 유저 생성 다이얼로그 열기
+function openCreateUserDialog() {
+  showCreateUserDialog.value = true;
+}
+
+// [추가] 유저 생성 완료 콜백
+function handleUserCreated(newUser: User) {
+  notifySuccess(`User '${newUser.username}' created successfully.`);
+  // 필요하다면 여기서 유저 관련 추가 작업 수행 (예: 스토어 갱신 등)
+}
 
 async function loadTeams() {
   try {
