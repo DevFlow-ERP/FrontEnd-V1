@@ -4,9 +4,20 @@
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { Team, TeamCreate, TeamUpdate, TeamMember, TeamMemberCreate, TeamMemberUpdate } from 'src/types/models.types';
+import type {
+  Team,
+  TeamCreate,
+  TeamUpdate,
+  TeamMember,
+  TeamMemberCreate,
+  TeamMemberUpdate,
+  TeamRole,
+} from 'src/types/models.types';
 import type { QueryParams } from 'src/types/api.types';
 import * as teamsApi from 'src/api/teams.api';
+import * as usersApi from 'src/api/users.api';
+
+import { useNotify } from 'src/composables/useNotify';
 
 // ============================================
 // Team Store
@@ -16,7 +27,7 @@ export const useTeamStore = defineStore('team', () => {
   // ============================================
   // State
   // ============================================
-
+  const { notifySuccess, notifyError } = useNotify();
   const teams = ref<Team[]>([]);
   const currentTeam = ref<Team | null>(null);
   const teamMembers = ref<TeamMember[]>([]);
@@ -53,9 +64,7 @@ export const useTeamStore = defineStore('team', () => {
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
       filtered = filtered.filter(
-        (t) =>
-          t.name.toLowerCase().includes(query) ||
-          t.description?.toLowerCase().includes(query)
+        (t) => t.name.toLowerCase().includes(query) || t.description?.toLowerCase().includes(query),
       );
     }
 
@@ -332,6 +341,43 @@ export const useTeamStore = defineStore('team', () => {
       isLoading.value = false;
     }
   }
+  /**
+   * 팀원의 정보(역할 및 이름)를 수정합니다.
+   * @param teamId 팀 ID
+   * @param userId 사용자 ID (팀원 ID가 아님)
+   * @param updates 수정할 정보 객체 { role: 역할, full_name: 이름 }
+   */
+  /**
+   * Update team member info (Role & Name)
+   */
+  async function updateMemberInfo(
+    teamId: number,
+    userId: number,
+    updates: { role?: TeamRole; full_name?: string },
+  ) {
+    try {
+      // 1. 역할(Role) 업데이트
+      if (updates.role) {
+        // [수정됨] updateTeamMemberRole -> updateTeamMember
+        await teamsApi.updateTeamMember(teamId, userId, { role: updates.role });
+      }
+
+      // 2. 이름(Full Name) 업데이트
+      if (updates.full_name) {
+        await usersApi.updateUser(userId, { full_name: updates.full_name });
+      }
+
+      notifySuccess('Member information updated successfully');
+
+      // 변경 사항 반영을 위해 멤버 목록 새로고침
+      await fetchTeamMembers(teamId);
+    } catch (error) {
+      // [수정됨] 에러 메시지 추출하여 전달
+      const message = error instanceof Error ? error.message : 'Unknown error occurred';
+      notifyError('Failed to update member information', message);
+      throw error;
+    }
+  }
 
   // ============================================
   // Utility Actions
@@ -390,6 +436,7 @@ export const useTeamStore = defineStore('team', () => {
   // ============================================
 
   return {
+    updateMemberInfo,
     // State
     teams,
     currentTeam,

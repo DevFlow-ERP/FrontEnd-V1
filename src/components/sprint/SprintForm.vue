@@ -1,155 +1,195 @@
 <template>
-  <q-form @submit="handleSubmit" class="sprint-form">
-    <!-- Name -->
-    <q-input
-      v-model="formData.name"
-      label="Sprint Name *"
-      :rules="[(val) => !!val || 'Name is required']"
-      outlined
-      class="q-mb-md"
-    />
-
-    <!-- Project -->
+  <q-form @submit="handleSubmit" class="q-gutter-md">
     <q-select
-      v-model="formData.project_id"
+      v-model="form.project_id"
       :options="projectOptions"
       label="Project *"
-      :rules="[(val) => !!val || 'Project is required']"
       outlined
+      dense
       emit-value
       map-options
-      class="q-mb-md"
+      :rules="[(val) => (val !== 0 && !!val) || 'Project is required']"
+      :disable="isEdit"
     />
 
-    <!-- Goal -->
     <q-input
-      v-model="formData.goal"
-      label="Sprint Goal"
-      type="textarea"
-      rows="3"
+      v-model="form.name"
+      label="Sprint Name *"
       outlined
-      class="q-mb-md"
+      dense
+      :rules="[(val) => !!val || 'Name is required']"
     />
 
-    <!-- Dates -->
-    <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-12 col-sm-6">
-        <q-input
-          v-model="formData.start_date"
-          label="Start Date *"
-          type="date"
-          :rules="[(val) => !!val || 'Start date is required']"
-          outlined
-        />
+    <q-input v-model="form.goal" label="Sprint Goal" outlined dense type="textarea" rows="3" />
+
+    <div class="row q-col-gutter-sm">
+      <div class="col-6">
+        <q-input v-model="form.start_date" label="Start Date" outlined dense type="date" />
       </div>
-      <div class="col-12 col-sm-6">
-        <q-input
-          v-model="formData.end_date"
-          label="End Date *"
-          type="date"
-          :rules="[
-            (val) => !!val || 'End date is required',
-            (val) => !formData.start_date || val >= formData.start_date || 'End date must be after start date'
-          ]"
-          outlined
-        />
+      <div class="col-6">
+        <q-input v-model="form.end_date" label="End Date" outlined dense type="date" />
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="row q-col-gutter-sm justify-end">
-      <div class="col-auto">
-        <q-btn
-          label="Cancel"
-          flat
-          @click="handleCancel"
-        />
-      </div>
-      <div class="col-auto">
-        <q-btn
-          :label="isEdit ? 'Update' : 'Create'"
-          type="submit"
-          color="primary"
-          :loading="loading"
-        />
-      </div>
+    <q-select
+      v-model="form.status"
+      :options="statusOptions"
+      label="Status"
+      outlined
+      dense
+      emit-value
+      map-options
+    >
+      <template v-slot:option="scope">
+        <q-item v-bind="scope.itemProps">
+          <q-item-section avatar>
+            <q-icon
+              :name="getStatusIcon(scope.opt.value)"
+              :color="getStatusColor(scope.opt.value)"
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ scope.opt.label }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+      <template v-slot:selected-item="scope">
+        <div class="row items-center q-gutter-x-sm">
+          <q-icon :name="getStatusIcon(scope.opt.value)" :color="getStatusColor(scope.opt.value)" />
+          <span>{{ scope.opt.label }}</span>
+        </div>
+      </template>
+    </q-select>
+
+    <div class="row justify-end q-gutter-sm">
+      <q-btn label="Cancel" flat color="grey" v-close-popup />
+      <q-btn
+        :label="isEdit ? 'Update' : 'Create'"
+        type="submit"
+        color="primary"
+        :loading="loading"
+      />
     </div>
   </q-form>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import type { Sprint, SprintCreate, SprintUpdate } from 'src/types/models.types';
+import { reactive, computed, watch } from 'vue';
+import type { Sprint, SprintCreate, SprintUpdate, SprintStatus } from 'src/types/models.types';
 
-// ============================================
-// Props
-// ============================================
-
+// Props 정의
 interface Props {
-  sprint?: Sprint | null;
+  sprint?: Sprint | undefined;
+  projectId: number;
   loading?: boolean;
+  // [추가됨] 프로젝트 목록 옵션 (label, value 형태)
   projectOptions?: { label: string; value: number }[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  sprint: null,
   loading: false,
   projectOptions: () => [],
 });
 
-// ============================================
-// Emits
-// ============================================
-
 const emit = defineEmits<{
-  submit: [data: SprintCreate | SprintUpdate];
-  cancel: [];
+  (e: 'submit', data: SprintCreate | SprintUpdate): void;
 }>();
 
-// ============================================
 // State
-// ============================================
+const isEdit = computed(() => !!props.sprint);
 
-const isEdit = ref(!!props.sprint);
+// 상태 옵션
+const statusOptions = [
+  { label: 'Planning', value: 'planning' },
+  { label: 'Active', value: 'active' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Cancelled', value: 'cancelled' },
+];
 
-const formData = ref<SprintCreate>({
+// Form Data
+const form = reactive({
+  project_id: 0, // [중요] form 내부에 project_id 관리
   name: '',
-  project_id: 0,
   goal: '',
   start_date: '',
   end_date: '',
+  status: 'planning' as SprintStatus,
 });
 
-// ============================================
-// Watch
-// ============================================
+// Helper Functions
+function getStatusIcon(status: string) {
+  switch (status) {
+    case 'active':
+      return 'play_circle';
+    case 'completed':
+      return 'check_circle';
+    case 'cancelled':
+      return 'cancel';
+    default:
+      return 'event_note';
+  }
+}
 
+function getStatusColor(status: string) {
+  switch (status) {
+    case 'active':
+      return 'primary';
+    case 'completed':
+      return 'positive';
+    case 'cancelled':
+      return 'negative';
+    default:
+      return 'grey';
+  }
+}
+
+// [수정됨] 초기화 로직을 watch로 변경하여 dialog 열릴 때마다 데이터 갱신
 watch(
   () => props.sprint,
   (sprint) => {
     if (sprint) {
-      isEdit.value = true;
-      formData.value = {
-        name: sprint.name,
-        project_id: sprint.project_id,
-        goal: sprint.goal || '',
-        start_date: sprint.start_date || '',
-        end_date: sprint.end_date || '',
-      };
+      // 수정 모드
+      form.project_id = sprint.project_id;
+      form.name = sprint.name;
+      form.goal = sprint.goal || '';
+      form.start_date = sprint.start_date ? (sprint.start_date.split('T')[0] ?? '') : '';
+      form.end_date = sprint.end_date ? (sprint.end_date.split('T')[0] ?? '') : '';
+      form.status = sprint.status;
+    } else {
+      // 생성 모드: props.projectId가 있으면(필터링된 상태 등) 기본값으로 사용, 없으면 0
+      form.project_id = props.projectId || 0;
+      form.name = '';
+      form.goal = '';
+      form.start_date = '';
+      form.end_date = '';
+      form.status = 'planning';
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-// ============================================
-// Methods
-// ============================================
-
+// Submit Handler
 function handleSubmit() {
-  emit('submit', formData.value);
-}
+  // 날짜 빈 문자열 처리 (백엔드 422 에러 방지)
+  const startDate = form.start_date === '' ? null : form.start_date;
+  const endDate = form.end_date === '' ? null : form.end_date;
 
-function handleCancel() {
-  emit('cancel');
+  const data = {
+    name: form.name,
+    goal: form.goal,
+    status: form.status,
+    start_date: startDate,
+    end_date: endDate,
+  };
+
+  if (isEdit.value) {
+    emit('submit', data as SprintUpdate);
+  } else {
+    // [핵심 수정] props.projectId 대신 form.project_id 사용
+    emit('submit', {
+      ...data,
+      project_id: form.project_id,
+    } as SprintCreate);
+  }
 }
 </script>

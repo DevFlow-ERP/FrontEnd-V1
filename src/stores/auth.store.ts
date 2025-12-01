@@ -76,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true;
     error.value = null;
 
+    // (기존 로그인 로직)
     try {
       const response = await authApi.login({ email, password });
 
@@ -205,7 +206,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const response = await authApi.handleAuthCallback(
-        state !== undefined ? { code, state } : { code }
+        state !== undefined ? { code, state } : { code },
       );
 
       // Store tokens and user

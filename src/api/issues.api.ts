@@ -10,7 +10,9 @@ import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
  * Get paginated list of issues
  */
 export async function listIssues(params?: QueryParams): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', { params });
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
+    params,
+  });
   return response.data;
 }
 
@@ -34,7 +36,7 @@ export async function createIssue(data: IssueCreate): Promise<Issue> {
  * Update an existing issue
  */
 export async function updateIssue(id: number, data: IssueUpdate): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}`, data);
+  const response = await apiClient.put<Issue>(`/issues/${id}`, data);
   return response.data;
 }
 
@@ -49,7 +51,13 @@ export async function deleteIssue(id: number): Promise<void> {
  * Update issue status
  */
 export async function updateIssueStatus(id: number, status: string): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/status`, { status });
+  const response = await apiClient.patch<Issue>(
+    `/issues/${id}/status`,
+    null, // 1. JSON 본문(body)을 null로 비웁니다.
+    {
+      params: { status }, // 2. 데이터를 쿼리 파라미터로 보냅니다.
+    },
+  );
   return response.data;
 }
 
@@ -57,7 +65,9 @@ export async function updateIssueStatus(id: number, status: string): Promise<Iss
  * Assign issue to a user
  */
 export async function assignIssue(id: number, assignee_id: number | null): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/assign`, { assignee_id });
+  const response = await apiClient.patch<Issue>(`/issues/${id}/assign`, {
+    assignee_id,
+  });
   return response.data;
 }
 
@@ -65,7 +75,9 @@ export async function assignIssue(id: number, assignee_id: number | null): Promi
  * Move issue to a sprint
  */
 export async function moveIssueToSprint(id: number, sprint_id: number | null): Promise<Issue> {
-  const response = await apiClient.patch<Issue>(`/issues/${id}/move`, { sprint_id });
+  const response = await apiClient.patch<Issue>(`/issues/${id}/sprint`, {
+    sprint_id,
+  });
   return response.data;
 }
 
@@ -74,10 +86,10 @@ export async function moveIssueToSprint(id: number, sprint_id: number | null): P
  */
 export async function getIssuesByProject(
   projectId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>(`/projects/${projectId}/issues`, {
-    params,
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
+    params: { ...params, project_id: projectId },
   });
   return response.data;
 }
@@ -85,16 +97,21 @@ export async function getIssuesByProject(
 /**
  * Get issues by sprint
  */
+
 export async function getIssuesBySprint(
   sprintId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues', {
-    params: {
-      ...params,
-      sprint_id: sprintId,
-    },
-  });
+  // 기존 params에 sprint_id를 쿼리 파라미터로 추가
+  const combinedParams: QueryParams = {
+    ...params,
+    sprint_id: sprintId,
+  };
+
+  const response = await apiClient.get<PaginatedResponse<Issue>>(
+    '/issues', // 올바른 엔드포인트
+    { params: combinedParams }, // 쿼리 파라미터로 전달
+  );
   return response.data;
 }
 
@@ -102,6 +119,6 @@ export async function getIssuesBySprint(
  * Get issues assigned to current user
  */
 export async function getMyIssues(params?: QueryParams): Promise<PaginatedResponse<Issue>> {
-  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues/me', { params });
+  const response = await apiClient.get<PaginatedResponse<Issue>>('/issues/my', { params });
   return response.data;
 }

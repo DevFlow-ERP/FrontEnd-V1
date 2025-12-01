@@ -34,7 +34,7 @@ export async function createService(data: ServiceCreate): Promise<Service> {
  * Update an existing service
  */
 export async function updateService(id: number, data: ServiceUpdate): Promise<Service> {
-  const response = await apiClient.patch<Service>(`/services/${id}`, data);
+  const response = await apiClient.put<Service>(`/services/${id}`, data);
   return response.data;
 }
 
@@ -49,7 +49,9 @@ export async function deleteService(id: number): Promise<void> {
  * Update service status
  */
 export async function updateServiceStatus(id: number, status: string): Promise<Service> {
-  const response = await apiClient.patch<Service>(`/services/${id}/status`, { status });
+  const response = await apiClient.patch<Service>(`/services/${id}/status`, null, {
+    params: { status },
+  });
   return response.data;
 }
 
@@ -58,9 +60,9 @@ export async function updateServiceStatus(id: number, status: string): Promise<S
  */
 export async function getServicesByServer(
   serverId: number,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Service>> {
-  const response = await apiClient.get<PaginatedResponse<Service>>(`/servers/${serverId}/services`, {
+  const response = await apiClient.get<PaginatedResponse<Service>>(`/services/server/${serverId}`, {
     params,
   });
   return response.data;
@@ -71,10 +73,10 @@ export async function getServicesByServer(
  */
 export async function getServicesByType(
   type: ServiceType,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Service>> {
-  const response = await apiClient.get<PaginatedResponse<Service>>('/services/type', {
-    params: { type, ...params },
+  const response = await apiClient.get<PaginatedResponse<Service>>(`/services/type/${type}`, {
+    params,
   });
   return response.data;
 }

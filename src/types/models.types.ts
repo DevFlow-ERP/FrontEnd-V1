@@ -10,13 +10,7 @@ import type { BaseEntity } from './common.types';
 
 export type TeamRole = 'owner' | 'admin' | 'member' | 'viewer';
 
-export type IssueStatus =
-  | 'todo'
-  | 'in_progress'
-  | 'in_review'
-  | 'testing'
-  | 'done'
-  | 'closed';
+export type IssueStatus = 'todo' | 'in_progress' | 'in_review' | 'testing' | 'done' | 'closed';
 
 export type IssuePriority = 'low' | 'medium' | 'high' | 'urgent';
 
@@ -46,12 +40,7 @@ export type ServiceStatus = 'running' | 'stopped' | 'degraded' | 'maintenance' |
 
 export type DeploymentType = 'manual' | 'automatic' | 'rollback';
 
-export type DeploymentStatus =
-  | 'pending'
-  | 'in_progress'
-  | 'success'
-  | 'failed'
-  | 'rolled_back';
+export type DeploymentStatus = 'pending' | 'in_progress' | 'success' | 'failed' | 'rolled_back';
 
 // ============================================
 // User
@@ -98,6 +87,7 @@ export interface TeamCreate {
   name: string;
   description?: string;
   is_active?: boolean;
+  member_ids?: number[];
 }
 
 export interface TeamUpdate {
@@ -113,6 +103,7 @@ export interface TeamUpdate {
 export interface TeamMember extends BaseEntity {
   team_id: number;
   user_id: number;
+  user: User; // [!code !] <-- 'Team' 탭 수정을 위해 이 줄이 추가되었습니다.
   role: TeamRole;
   joined_at: string;
 }
@@ -404,4 +395,13 @@ export interface DeploymentUpdate {
   notes?: string;
   error_message?: string;
   log_url?: string;
+}
+
+export interface ProjectStats {
+  total_sprints: number;
+  active_sprints: number;
+  total_issues: number;
+  open_issues: number;
+  completed_issues: number;
+  team_members: number;
 }

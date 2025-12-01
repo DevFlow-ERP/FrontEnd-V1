@@ -3,12 +3,7 @@
 // ============================================
 
 import axios from 'axios';
-import type {
-  AxiosInstance,
-  AxiosError,
-  InternalAxiosRequestConfig,
-  AxiosResponse,
-} from 'axios';
+import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import type { ApiError } from 'src/types/api.types';
 import { Notify } from 'quasar';
 
@@ -68,7 +63,7 @@ apiClient.interceptors.request.use(
   (error: AxiosError) => {
     console.error('❌ Request Error:', error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // ============================================
@@ -115,12 +110,13 @@ apiClient.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        // Call refresh token endpoint
+        // Call refresh token endpoint (using original method)
+        // 'is of type unknown' 오류 수정을 위해 타입 단언 추가
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'}/auth/refresh`,
           {
             refresh_token: refreshToken,
-          }
+          },
         );
 
         const { access_token } = response.data;
@@ -133,7 +129,9 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${access_token}`;
         }
 
-        return apiClient(originalRequest);
+        // Retry the original request (e.g., apiClient.get, apiClient.post...)
+        // We use the 'axios(originalRequest)' pattern which correctly re-uses the original method (GET, POST, etc.)
+        return axios(originalRequest);
       } catch (refreshError) {
         // Refresh failed - clear tokens and redirect to login
         localStorage.removeItem('access_token');
@@ -146,13 +144,12 @@ apiClient.interceptors.response.use(
         }
 
         return Promise.reject(
-          refreshError instanceof Error
-            ? refreshError
-            : new Error('Token refresh failed')
+          refreshError instanceof Error ? refreshError : new Error('Token refresh failed'),
         );
       }
     }
 
+    // ... (Original 403, 404, 500, 400 Notify handlers remain unchanged) ...
     // Handle 403 Forbidden - No permission
     if (error.response?.status === 403) {
       console.error('🚫 Access Denied:', error.response.data);
@@ -211,17 +208,14 @@ apiClient.interceptors.response.use(
 
     // Transform error for consistent error handling
     const apiError: ApiError = {
-      message:
-        error.response?.data?.message ||
-        error.message ||
-        'An unexpected error occurred',
+      message: error.response?.data?.message || error.message || 'An unexpected error occurred',
       detail: error.response?.data?.detail,
       status: error.response?.status || 0,
       errors: error.response?.data?.errors,
     };
 
     return Promise.reject(new ApiErrorClass(apiError));
-  }
+  },
 );
 
 // ============================================
@@ -255,10 +249,5 @@ export function handleApiError(error: unknown): ApiError {
  * Type guard to check if error is ApiError
  */
 export function isApiError(error: unknown): error is ApiError {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'message' in error &&
-    'status' in error
-  );
+  return typeof error === 'object' && error !== null && 'message' in error && 'status' in error;
 }

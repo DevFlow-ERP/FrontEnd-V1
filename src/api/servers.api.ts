@@ -3,7 +3,13 @@
 // ============================================
 
 import apiClient from './client';
-import type { Server, ServerCreate, ServerUpdate, ServerEnvironment, ServerType } from 'src/types/models.types';
+import type {
+  Server,
+  ServerCreate,
+  ServerUpdate,
+  ServerEnvironment,
+  ServerType,
+} from 'src/types/models.types';
 import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 
 /**
@@ -34,7 +40,7 @@ export async function createServer(data: ServerCreate): Promise<Server> {
  * Update an existing server
  */
 export async function updateServer(id: number, data: ServerUpdate): Promise<Server> {
-  const response = await apiClient.patch<Server>(`/servers/${id}`, data);
+  const response = await apiClient.put<Server>(`/servers/${id}`, data);
   return response.data;
 }
 
@@ -49,7 +55,9 @@ export async function deleteServer(id: number): Promise<void> {
  * Update server status
  */
 export async function updateServerStatus(id: number, status: string): Promise<Server> {
-  const response = await apiClient.patch<Server>(`/servers/${id}/status`, { status });
+  const response = await apiClient.patch<Server>(`/servers/${id}/status`, null, {
+    params: { status },
+  });
   return response.data;
 }
 
@@ -58,11 +66,12 @@ export async function updateServerStatus(id: number, status: string): Promise<Se
  */
 export async function getServersByEnvironment(
   environment: ServerEnvironment,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Server>> {
-  const response = await apiClient.get<PaginatedResponse<Server>>('/servers/environment', {
-    params: { environment, ...params },
-  });
+  const response = await apiClient.get<PaginatedResponse<Server>>(
+    `/servers/environment/${environment}`,
+    { params },
+  );
   return response.data;
 }
 
@@ -71,10 +80,10 @@ export async function getServersByEnvironment(
  */
 export async function getServersByType(
   type: ServerType,
-  params?: QueryParams
+  params?: QueryParams,
 ): Promise<PaginatedResponse<Server>> {
-  const response = await apiClient.get<PaginatedResponse<Server>>('/servers/type', {
-    params: { type, ...params },
+  const response = await apiClient.get<PaginatedResponse<Server>>(`/servers/type/${type}`, {
+    params,
   });
   return response.data;
 }
