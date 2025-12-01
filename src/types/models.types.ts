@@ -59,16 +59,23 @@ export interface User extends BaseEntity {
 }
 
 export interface UserCreate {
-  authentik_id: string;
   email: string;
   username: string;
-  full_name?: string;
-  avatar_url?: string;
+  full_name: string;
+  phone: string;
+  is_admin: boolean;
+  // [수정] 명시적으로 undefined와 null 허용
+  authentik_id?: string | null | undefined;
+  avatar_url?: string | null | undefined;
 }
 
 export interface UserUpdate {
+  email?: string;
+  username?: string;
   full_name?: string;
-  avatar_url?: string;
+  phone?: string;
+  // [수정] 명시적으로 undefined와 null 허용
+  avatar_url?: string | null | undefined;
   is_active?: boolean;
 }
 
@@ -81,6 +88,7 @@ export interface Team extends BaseEntity {
   description: string | null;
   owner_id: number;
   is_active: boolean;
+  avatar_url?: string | null;
 }
 
 export interface TeamCreate {
@@ -100,12 +108,16 @@ export interface TeamUpdate {
 // Team Member
 // ============================================
 
-export interface TeamMember extends BaseEntity {
-  team_id: number;
-  user_id: number;
-  user: User; // [!code !] <-- 'Team' 탭 수정을 위해 이 줄이 추가되었습니다.
-  role: TeamRole;
-  joined_at: string;
+export interface User extends BaseEntity {
+  authentik_id: string;
+  email: string;
+  username: string;
+  full_name: string | null;
+  phone: string | null;
+  is_active: boolean;
+  is_admin: boolean;
+  is_superuser?: boolean;
+  avatar_url: string | null;
 }
 
 export interface TeamMemberCreate {
@@ -404,4 +416,18 @@ export interface ProjectStats {
   open_issues: number;
   completed_issues: number;
   team_members: number;
+}
+
+export interface TeamMember extends BaseEntity {
+  team_id: number;
+  user_id: number;
+  user?: User; // Optional로 설정하거나, 백엔드 응답에 항상 포함된다면 필수 값으로 설정
+  role: TeamRole;
+  joined_at?: string; // 백엔드 스키마에 따라 Optional일 수 있음 (created_at으로 매핑될 수도 있음)
+}
+
+export interface UserProfile {
+  user: User;
+  teams: Team[]; // TeamListResponse에 대응
+  projects: Project[]; // ProjectListResponse에 대응
 }

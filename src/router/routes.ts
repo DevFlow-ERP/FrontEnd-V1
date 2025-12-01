@@ -29,14 +29,14 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
-  // Unauthorized page (no guard - accessible to all)
   {
     path: '/auth/unauthorized',
-    name: 'unauthorized',
+    // name: 'unauthorized', // [삭제] 부모 라우트에서 이름 제거
     component: () => import('layouts/AuthLayout.vue'),
     children: [
       {
         path: '',
+        name: 'unauthorized', // [이동] 자식 라우트에 이름 부여
         component: () => import('pages/auth/UnauthorizedPage.vue'),
         meta: { title: '접근 권한 없음' },
       },
@@ -174,11 +174,10 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '배포 상세' },
       },
 
-      // Profile (Placeholder)
       {
         path: 'profile',
         name: 'profile',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/profile/ProfilePage.vue'),
         meta: { title: '프로필' },
       },
 
@@ -188,6 +187,11 @@ const routes: RouteRecordRaw[] = [
         name: 'settings',
         component: () => import('pages/IndexPage.vue'),
         meta: { title: '설정' },
+      },
+
+      {
+        path: 'profile',
+        component: () => import('pages/profile/ProfilePage.vue'),
       },
     ],
   },
