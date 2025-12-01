@@ -1,7 +1,7 @@
 <template>
-  <q-form @submit="handleSubmit" class="q-gutter-md">
+  <q-form @submit="handleSubmit" class="q-gutter-y-md">
     <div class="row q-col-gutter-md">
-      <div class="col-12 col-md-6">
+      <div class="col-6">
         <q-input
           v-model="form.email"
           label="Email *"
@@ -13,7 +13,7 @@
           ]"
         />
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-6">
         <q-input
           v-model="form.username"
           label="Username *"
@@ -25,7 +25,7 @@
     </div>
 
     <div class="row q-col-gutter-md">
-      <div class="col-12 col-md-6">
+      <div class="col-6">
         <q-input
           v-model="form.full_name"
           label="Full Name *"
@@ -34,42 +34,46 @@
           :rules="[(val) => !!val || 'Full name is required']"
         />
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-6">
         <q-input
           v-model="form.phone"
           label="Phone *"
           outlined
           dense
           mask="###-####-####"
-          placeholder="010-0000-0000"
+          hint="010-0000-0000"
           :rules="[(val) => !!val || 'Phone is required']"
         />
       </div>
     </div>
 
-    <q-input
-      v-model="form.avatar_url"
-      label="Avatar URL"
-      outlined
-      dense
-      placeholder="https://example.com/avatar.png"
-    />
+    <div class="row">
+      <div class="col-12">
+        <q-input
+          v-model="form.avatar_url"
+          label="Avatar URL"
+          outlined
+          dense
+          placeholder="https://..."
+        />
+      </div>
+    </div>
 
-    <q-input
-      v-if="!isEdit"
-      v-model="form.authentik_id"
-      label="Authentik ID (Optional)"
-      outlined
-      dense
-      hint="Leave empty to auto-generate"
-    />
+    <div class="row" v-if="!isEdit">
+      <div class="col-12">
+        <q-input
+          v-model="form.authentik_id"
+          label="Authentik ID"
+          outlined
+          dense
+          hint="Optional for SSO linkage"
+        />
+      </div>
+    </div>
 
-    <div class="row q-col-gutter-md q-mt-sm">
+    <div class="row q-col-gutter-md items-center">
       <div class="col-auto">
         <q-toggle v-model="form.is_admin" label="Admin User" color="negative" />
-      </div>
-      <div class="col-auto" v-if="isEdit">
-        <q-toggle v-model="form.is_active" label="Active Account" color="positive" />
       </div>
     </div>
 
@@ -86,11 +90,13 @@
 </template>
 
 <script setup lang="ts">
+// ... (스크립트 부분은 기존과 동일하므로 유지)
 import { reactive, computed, onMounted } from 'vue';
 import type { User, UserCreate, UserUpdate } from 'src/types/models.types';
 
+// [기존 코드 유지] Props 인터페이스
 interface Props {
-  user?: User | undefined;
+  user?: User | undefined; // 수정된 타입
   loading?: boolean;
 }
 
@@ -124,7 +130,6 @@ onMounted(() => {
     form.avatar_url = props.user.avatar_url || '';
     form.is_admin = props.user.is_admin;
     form.is_active = props.user.is_active;
-    form.authentik_id = props.user.authentik_id;
   }
 });
 

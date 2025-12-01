@@ -2,7 +2,7 @@
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { User, UserCreate, UserUpdate } from 'src/types/models.types';
+import type { User, UserCreate, UserUpdate, UserProfile } from 'src/types/models.types';
 import type { QueryParams } from 'src/types/api.types';
 import * as usersApi from 'src/api/users.api';
 
@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
   const users = ref<User[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+  const userProfile = ref<UserProfile | null>(null);
 
   // Pagination
   const currentPage = ref(1);
@@ -100,6 +101,21 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function fetchUserProfile() {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const profile = await usersApi.getUserProfile();
+      userProfile.value = profile;
+      return profile;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to fetch profile';
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // Utility Actions
   function setPage(page: number) {
     currentPage.value = page;
@@ -119,6 +135,8 @@ export const useUserStore = defineStore('user', () => {
     totalCount,
     searchQuery,
     totalPages,
+    userProfile,
+    fetchUserProfile,
     fetchUsers,
     createUser,
     updateUser,

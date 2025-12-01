@@ -88,6 +88,7 @@ export interface Team extends BaseEntity {
   description: string | null;
   owner_id: number;
   is_active: boolean;
+  avatar_url?: string | null;
 }
 
 export interface TeamCreate {
@@ -423,4 +424,10 @@ export interface TeamMember extends BaseEntity {
   user?: User; // Optional로 설정하거나, 백엔드 응답에 항상 포함된다면 필수 값으로 설정
   role: TeamRole;
   joined_at?: string; // 백엔드 스키마에 따라 Optional일 수 있음 (created_at으로 매핑될 수도 있음)
+}
+
+export interface UserProfile {
+  user: User;
+  teams: Team[]; // TeamListResponse에 대응
+  projects: Project[]; // ProjectListResponse에 대응
 }

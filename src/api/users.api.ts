@@ -2,7 +2,7 @@
 
 import apiClient from './client';
 // [수정] UserCreate 추가 Import
-import type { User, UserCreate, UserUpdate } from 'src/types/models.types';
+import type { User, UserCreate, UserUpdate, UserProfile } from 'src/types/models.types';
 import type { PaginatedResponse, QueryParams } from 'src/types/api.types';
 
 /**
@@ -47,4 +47,9 @@ export async function updateUser(id: number, data: UserUpdate): Promise<User> {
  */
 export async function deleteUser(id: number): Promise<void> {
   await apiClient.delete(`/users/${id}`);
+}
+
+export async function getUserProfile(): Promise<UserProfile> {
+  const response = await apiClient.get<UserProfile>('/users/me/profile');
+  return response.data;
 }
