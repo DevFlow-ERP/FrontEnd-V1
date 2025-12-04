@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="text-h4 q-mb-md">칸반 보드</div>
+    <div class="text-h4 text-weight-bold">kanban board</div>
 
     <div v-if="issueStore.isLoading" class="flex flex-center" style="height: 50vh">
       <q-spinner-dots color="primary" size="50px" />

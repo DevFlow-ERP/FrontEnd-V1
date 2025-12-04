@@ -36,24 +36,24 @@ const route = useRoute();
 // ============================================
 
 const breadcrumbMap: Record<string, BreadcrumbItem> = {
-  dashboard: { label: '대시보드', icon: 'dashboard' },
-  projects: { label: '프로젝트', icon: 'folder' },
-  'project-detail': { label: '프로젝트 상세', icon: 'folder_open' },
-  sprints: { label: '스프린트', icon: 'sprint' },
-  'sprint-detail': { label: '스프린트 상세', icon: 'event' },
-  issues: { label: '이슈', icon: 'bug_report' },
-  'issue-detail': { label: '이슈 상세', icon: 'assignment' },
-  kanban: { label: '칸반 보드', icon: 'view_column' },
-  teams: { label: '팀', icon: 'groups' },
-  'team-detail': { label: '팀 상세', icon: 'group' },
-  servers: { label: '서버', icon: 'storage' },
-  'server-detail': { label: '서버 상세', icon: 'storage' },
-  services: { label: '서비스', icon: 'api' },
-  'service-detail': { label: '서비스 상세', icon: 'api' },
-  deployments: { label: '배포', icon: 'rocket_launch' },
-  'deployment-detail': { label: '배포 상세', icon: 'cloud_upload' },
-  profile: { label: '프로필', icon: 'person' },
-  settings: { label: '설정', icon: 'settings' },
+  dashboard: { label: 'Dashboard', icon: 'dashboard' },
+  projects: { label: 'Projects', icon: 'folder' },
+  'project-detail': { label: 'Project Detail', icon: 'folder_open' },
+  sprints: { label: 'Sprints', icon: 'sprint' },
+  'sprint-detail': { label: 'Sprint Detail', icon: 'event' },
+  issues: { label: 'Issues', icon: 'bug_report' },
+  'issue-detail': { label: 'Issue Detail', icon: 'assignment' },
+  kanban: { label: 'Kanban', icon: 'view_column' },
+  teams: { label: 'Teams', icon: 'groups' },
+  'team-detail': { label: 'Team Detail', icon: 'group' },
+  servers: { label: 'Servers', icon: 'storage' },
+  'server-detail': { label: 'Server Detail', icon: 'storage' },
+  services: { label: 'Services', icon: 'api' },
+  'service-detail': { label: 'Service Detail', icon: 'api' },
+  deployments: { label: 'Deployments', icon: 'rocket_launch' },
+  'deployment-detail': { label: 'Deployment Detail', icon: 'cloud_upload' },
+  profile: { label: 'Profile', icon: 'person' },
+  settings: { label: 'Settings', icon: 'settings' },
 };
 
 // ============================================
@@ -65,7 +65,7 @@ const breadcrumbs = computed(() => {
 
   // Always start with Home
   items.push({
-    label: '홈',
+    label: 'home',
     icon: 'home',
     to: '/dashboard',
   });
@@ -77,7 +77,7 @@ const breadcrumbs = computed(() => {
   // Handle special cases
   if (routeName.startsWith('project')) {
     items.push({
-      label: '프로젝트',
+      label: 'Projects',
       to: '/projects',
     });
     if (routeName === 'project-detail') {
@@ -87,7 +87,7 @@ const breadcrumbs = computed(() => {
     }
   } else if (routeName.startsWith('sprint')) {
     items.push({
-      label: '스프린트',
+      label: 'Sprints',
       to: '/sprints',
     });
     if (routeName === 'sprint-detail') {
@@ -97,7 +97,7 @@ const breadcrumbs = computed(() => {
     }
   } else if (routeName.startsWith('issue')) {
     items.push({
-      label: '이슈',
+      label: 'Issues',
       to: '/issues',
     });
     if (routeName === 'issue-detail') {
@@ -107,7 +107,7 @@ const breadcrumbs = computed(() => {
     }
   } else if (routeName.startsWith('team')) {
     items.push({
-      label: '팀',
+      label: 'Teams',
       to: '/teams',
     });
     if (routeName === 'team-detail') {
@@ -117,33 +117,33 @@ const breadcrumbs = computed(() => {
     }
   } else if (routeName === 'servers' || routeName === 'server-detail') {
     items.push({
-      label: '리소스',
+      label: 'Resources',
     });
     items.push({
-      label: '서버',
+      label: 'Servers',
       ...(routeName === 'server-detail' && { to: '/resources/servers' }),
     });
     if (routeName === 'server-detail') {
       items.push({
-        label: '서버 상세',
+        label: 'Server Detail',
       });
     }
   } else if (routeName === 'services' || routeName === 'service-detail') {
     items.push({
-      label: '리소스',
+      label: 'Resources',
     });
     items.push({
-      label: '서비스',
+      label: 'Services',
       ...(routeName === 'service-detail' && { to: '/resources/services' }),
     });
     if (routeName === 'service-detail') {
       items.push({
-        label: '서비스 상세',
+        label: 'Service Detail',
       });
     }
   } else if (routeName.startsWith('deployment')) {
     items.push({
-      label: '배포',
+      label: 'Deployments',
       to: '/deployments',
     });
     if (routeName === 'deployment-detail') {

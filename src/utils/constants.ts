@@ -24,12 +24,12 @@ import type { SelectOption } from 'src/types/api.types';
 // ============================================
 
 export const ISSUE_STATUS_OPTIONS: SelectOption<IssueStatus>[] = [
-  { label: '할 일', value: 'todo', icon: 'radio_button_unchecked' },
-  { label: '진행 중', value: 'in_progress', icon: 'pending' },
-  { label: '리뷰 중', value: 'in_review', icon: 'rate_review' },
-  { label: '테스트 중', value: 'testing', icon: 'science' },
-  { label: '완료', value: 'done', icon: 'check_circle' },
-  { label: '종료', value: 'closed', icon: 'cancel' },
+  { label: 'To Do', value: 'todo', icon: 'radio_button_unchecked' },
+  { label: 'In Progress', value: 'in_progress', icon: 'pending' },
+  { label: 'In Review', value: 'in_review', icon: 'rate_review' },
+  { label: 'Testing', value: 'testing', icon: 'science' },
+  { label: 'Done', value: 'done', icon: 'check_circle' },
+  { label: 'Closed', value: 'closed', icon: 'cancel' },
 ];
 
 export const ISSUE_PRIORITY_OPTIONS: SelectOption<IssuePriority>[] = [

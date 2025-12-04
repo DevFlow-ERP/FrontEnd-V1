@@ -3,18 +3,11 @@
     <!-- Page Header -->
     <div class="row items-center q-mb-lg">
       <div class="col">
-        <div class="text-h4 text-weight-bold">Dashboard</div>
-        <div class="text-subtitle2 text-grey-7">
-          Welcome back, {{ userFullName }}
-        </div>
+        <div class="text-h4 text-weight-bold">Dash board</div>
+        <div class="text-subtitle2 text-grey-7">Welcome back, {{ userFullName }}</div>
       </div>
       <div class="col-auto">
-        <q-btn
-          color="primary"
-          icon="add"
-          label="New Project"
-          @click="handleCreateProject"
-        />
+        <q-btn color="primary" icon="add" label="New Project" @click="handleCreateProject" />
       </div>
     </div>
 

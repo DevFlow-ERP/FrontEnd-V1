@@ -3,7 +3,7 @@
     <div class="q-pa-md">
       <div class="row items-center justify-between q-mb-md">
         <div class="col">
-          <h4 class="text-h4 q-my-none">Teams</h4>
+          <h4 class="text-h4 text-weight-bold">Teams</h4>
           <div class="text-body2 text-grey-7">Manage teams and members</div>
         </div>
         <div class="col-auto row q-gutter-sm">

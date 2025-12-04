@@ -25,14 +25,7 @@
         <q-space />
 
         <!-- Global Search -->
-        <q-btn
-          flat
-          dense
-          round
-          icon="search"
-          @click="showSearch = true"
-          class="q-mr-sm"
-        >
+        <q-btn flat dense round icon="search" @click="showSearch = true" class="q-mr-sm">
           <q-tooltip>검색 (Ctrl+K)</q-tooltip>
         </q-btn>
 
@@ -83,7 +76,7 @@
                 <q-item-section avatar>
                   <q-icon name="person" />
                 </q-item-section>
-                <q-item-section>프로필</q-item-section>
+                <q-item-section>Profile</q-item-section>
               </q-item>
 
               <!-- Settings -->
@@ -91,7 +84,7 @@
                 <q-item-section avatar>
                   <q-icon name="settings" />
                 </q-item-section>
-                <q-item-section>설정</q-item-section>
+                <q-item-section>Settings</q-item-section>
               </q-item>
 
               <q-separator />
@@ -101,7 +94,7 @@
                 <q-item-section avatar>
                   <q-icon name="logout" color="negative" />
                 </q-item-section>
-                <q-item-section>로그아웃</q-item-section>
+                <q-item-section>Logout</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -110,13 +103,7 @@
     </q-header>
 
     <!-- Left Drawer (Sidebar) -->
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      :width="250"
-      :breakpoint="1024"
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="250" :breakpoint="1024">
       <q-scroll-area class="fit">
         <q-list padding>
           <!-- Dashboard -->
@@ -130,7 +117,7 @@
             <q-item-section avatar>
               <q-icon name="dashboard" />
             </q-item-section>
-            <q-item-section>대시보드</q-item-section>
+            <q-item-section>Dash board</q-item-section>
           </q-item>
 
           <q-separator class="q-my-sm" />
@@ -146,7 +133,7 @@
             <q-item-section avatar>
               <q-icon name="folder" />
             </q-item-section>
-            <q-item-section>프로젝트</q-item-section>
+            <q-item-section>Projects</q-item-section>
           </q-item>
 
           <!-- Sprints -->
@@ -160,7 +147,7 @@
             <q-item-section avatar>
               <q-icon name="sprint" />
             </q-item-section>
-            <q-item-section>스프린트</q-item-section>
+            <q-item-section>Sprints</q-item-section>
           </q-item>
 
           <!-- Issues -->
@@ -174,7 +161,7 @@
             <q-item-section avatar>
               <q-icon name="bug_report" />
             </q-item-section>
-            <q-item-section>이슈</q-item-section>
+            <q-item-section>Issues</q-item-section>
           </q-item>
 
           <!-- Kanban Board -->
@@ -188,7 +175,7 @@
             <q-item-section avatar>
               <q-icon name="view_column" />
             </q-item-section>
-            <q-item-section>칸반 보드</q-item-section>
+            <q-item-section>Kanban Board</q-item-section>
           </q-item>
 
           <q-separator class="q-my-sm" />
@@ -204,7 +191,7 @@
             <q-item-section avatar>
               <q-icon name="groups" />
             </q-item-section>
-            <q-item-section>팀</q-item-section>
+            <q-item-section>Teams</q-item-section>
           </q-item>
 
           <q-separator class="q-my-sm" />
@@ -212,7 +199,7 @@
           <!-- Resources -->
           <q-expansion-item
             icon="dns"
-            label="리소스"
+            label="resources"
             :default-opened="isActiveRoute('/resources')"
           >
             <!-- Servers -->
@@ -227,7 +214,7 @@
               <q-item-section avatar>
                 <q-icon name="storage" />
               </q-item-section>
-              <q-item-section>서버</q-item-section>
+              <q-item-section>Servers</q-item-section>
             </q-item>
 
             <!-- Services -->
@@ -242,7 +229,7 @@
               <q-item-section avatar>
                 <q-icon name="api" />
               </q-item-section>
-              <q-item-section>서비스</q-item-section>
+              <q-item-section>Services</q-item-section>
             </q-item>
           </q-expansion-item>
 
@@ -257,7 +244,7 @@
             <q-item-section avatar>
               <q-icon name="rocket_launch" />
             </q-item-section>
-            <q-item-section>배포</q-item-section>
+            <q-item-section>Deployments</q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
