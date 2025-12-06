@@ -1,21 +1,14 @@
 <template>
   <q-page class="issue-list-page">
-    <div class="q-pa-md">
+    <div class="q-px-md q-pb-md q-pt-none">
       <!-- Page Header -->
       <div class="row items-center justify-between q-mb-md">
         <div class="col">
-          <h4 class="text-h4 q-my-none">Issues</h4>
-          <div class="text-body2 text-grey-7">
-            Manage and track project issues
-          </div>
+          <h4 class="text-h4 text-weight-bold">Issues</h4>
+          <div class="text-body2 text-grey-7">Manage and track project issues</div>
         </div>
         <div class="col-auto">
-          <q-btn
-            color="primary"
-            label="New Issue"
-            icon="add"
-            @click="showCreateDialog = true"
-          />
+          <q-btn color="primary" label="New Issue" icon="add" @click="showCreateDialog = true" />
         </div>
       </div>
 
@@ -113,11 +106,7 @@
           title="No issues found"
           description="Create your first issue to get started"
         >
-          <q-btn
-            color="primary"
-            label="Create Issue"
-            @click="showCreateDialog = true"
-          />
+          <q-btn color="primary" label="Create Issue" @click="showCreateDialog = true" />
         </empty-state>
       </div>
 
@@ -125,9 +114,7 @@
         <!-- View Mode Toggle -->
         <div class="row items-center justify-between q-mb-md">
           <div class="col-auto">
-            <div class="text-subtitle2 text-grey-7">
-              {{ issueStore.totalCount }} issue(s) found
-            </div>
+            <div class="text-subtitle2 text-grey-7">{{ issueStore.totalCount }} issue(s) found</div>
           </div>
           <div class="col-auto">
             <q-btn-toggle

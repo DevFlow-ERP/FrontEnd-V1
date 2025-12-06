@@ -100,7 +100,7 @@ const isEdit = computed(() => !!props.sprint);
 
 // 상태 옵션
 const statusOptions = [
-  { label: 'Planning', value: 'planning' },
+  // { label: 'Planning', value: 'planning' },
   { label: 'Active', value: 'active' },
   { label: 'Completed', value: 'completed' },
   { label: 'Cancelled', value: 'cancelled' },

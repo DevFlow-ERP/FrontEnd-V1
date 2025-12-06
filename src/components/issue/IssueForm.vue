@@ -103,23 +103,14 @@
         />
       </div>
       <div class="col-12 col-sm-4">
-        <q-input
-          v-model="formData.due_date"
-          label="Due Date"
-          type="date"
-          outlined
-        />
+        <q-input v-model="formData.due_date" label="Due Date" type="date" outlined />
       </div>
     </div>
 
     <!-- Actions -->
     <div class="row q-col-gutter-sm justify-end">
       <div class="col-auto">
-        <q-btn
-          label="Cancel"
-          flat
-          @click="handleCancel"
-        />
+        <q-btn label="Cancel" flat @click="handleCancel" />
       </div>
       <div class="col-auto">
         <q-btn
@@ -185,7 +176,7 @@ const formData = ref<IssueCreate>({
 
 const typeOptions = [
   { label: 'Epic', value: 'epic' },
-  { label: 'Story', value: 'story' },
+  //{ label: 'Story', value: 'story' },
   { label: 'Task', value: 'task' },
   { label: 'Bug', value: 'bug' },
   { label: 'Improvement', value: 'improvement' },
@@ -236,7 +227,7 @@ watch(
       formData.value = data;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // ============================================
